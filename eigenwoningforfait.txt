@@ -1,0 +1,80 @@
+I need a new class for the calculation of Eigen Woning Forfait
+Pending on the value of the own house the eigenwoning forfait can be calculated
+
+
+
+I think the Database must look like this 
+
+# Create the table eigenwoning forfait
+cursor.execute("""
+    CREATE TABLE tbl_eigenwoningforfait (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        year INTEGER NOT NULL,
+        schijf_no INTEGER NOT NULL
+        limit_WOZ REAL NOT NULL,
+        percentage REAL NOT NULL,
+        bedrag  REAL NOT NULL
+    )
+""")
+
+Data for year 2024 pls search and find data for 2023 to 2020
+
+tbl_eigenwoningforfait = [
+    (2024, 1,   12500,        0,    0),
+    (2024, 2,   25000,    0.001,    0),
+    (2024, 3,   50000,    0.002,    0),
+    (2024, 4,   75000,   0.0025,    0),
+    (2024, 5, 1310000,   0.0035,    0),
+    (2024, 5,99000000,  0.00235, 4586)
+]
+
+cursor.executemany("""
+    INSERT INTO tbl_eigenwoningforfait (year,schijf_no, limit_WOZ, percentage, bedrag)
+    VALUES (?, ?, ?, ?, ? )
+
+
+Working VBA Function. Needs to be translated to pythom class
+'=======================Eigen Woning Forfait===============================
+Public Function EIgenWoningForfait2024(WOZWaarde As Double)
+
+Dim schijf1, schijf2, schijf3, schijf4, schijf5, schijf6 As Double
+
+Dim perc1, perc2, perc3, perc4, perc5, perc6 As Double
+Dim bedrag6 As Double
+
+'====================================================================
+'Pas hier de definities aan
+schijf1 = 12500: perc1 = 0#
+schijf2 = 25000: perc2 = 0.001
+schijf3 = 50000: perc3 = 0.002
+schijf4 = 75000: perc4 = 0.0025
+schijf5 = 1310000: perc5 = 0.0035
+perc6 = 0.00235: bedrag6 = 4586#
+
+    Select Case WOZWaarde
+    
+      Case Is <= schijf1
+            EIgenWoningForfait2024 = 0
+            
+      Case Is <= schijf2
+            EIgenWoningForfait2024 = perc2 * WOZWaarde
+    
+      
+      Case Is <= schijf3
+            EIgenWoningForfait2024 = perc3 * WOZWaarde
+            
+      Case Is <= schijf4
+            EIgenWoningForfait2024 = perc4 * WOZWaarde
+            
+      Case Is < schijf5
+            EIgenWoningForfait2024 = perc5 * WOZWaarde
+            
+            
+      Case Is > schijf5
+            EIgenWoningForfait2024 = bedrag6 + perc6 * (WOZWaarde - schijf5)
+    
+    End Select
+
+
+
+End Function

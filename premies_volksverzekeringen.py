@@ -1,5 +1,3 @@
-"""Premies VolksVerzekeringen"""
-
 import sqlite3
 
 class PremiesVolksverzekeringen:
@@ -8,57 +6,54 @@ class PremiesVolksverzekeringen:
         self.conn = sqlite3.connect('mijn_belastingen.db')
         self.cursor = self.conn.cursor()
 
-    def get_premie_tarief(self, year):
+    def get_premie_tarief(self, year, aow_age):
         """
-        Fetch the premium rates and maximum income threshold for the given year.
+        Fetch the premium rates and maximum income threshold for the given year and AOW age status.
         """
-        print(year)
         self.cursor.execute("""
-            SELECT year, aow_tarief, anw_tarief, wlz_tarief, totaal_tarief, maximaal_inkomen, maximaal_premie
+            SELECT aow_tarief, anw_tarief, wlz_tarief, maximaal_inkomen
             FROM tax_premies_volksverzekeringen
-            WHERE year = ?
-        """, (year,))
+            WHERE year = ? AND aow_age = ?
+        """, (year, aow_age))
         result = self.cursor.fetchone()
         if result:
             return {
-                'year': result[0],
-                'aow_tarief': result[1],
-                'anw_tarief': result[2],
-                'wlz_tarief': result[3],
-                'totaal_tarief': result[4],
-                'maximaal_inkomen': result[5],
-                'maximaal_premie': result[6]
+                'aow_tarief': result[0],
+                'anw_tarief': result[1],
+                'wlz_tarief': result[2],
+                'maximaal_inkomen': result[3]
             }
         return None
 
-    def bereken_premies(self, brutojaarsalaris, year):
+    def bereken_premies(self, brutojaarsalaris, year, aow_age):
         """
-        Calculate the premiums for AOW, ANW, and Wlz based on the given income and year.
+        Calculate the premiums for AOW, ANW, and Wlz based on the given income, year, and AOW age status.
         """
-        # Fetch the premium rates and maximum income threshold for the given year
-        premie_data = self.get_premie_tarief(year)
+        # Fetch the premium rates and maximum income threshold for the given year and AOW age status
+        premie_data = self.get_premie_tarief(year, aow_age)
         if not premie_data:
-            raise ValueError(f"No premium data found for year {year}")
+            raise ValueError(f"No premium data found for year {year} and AOW age status {aow_age}")
 
         # Extract the premium rates and maximum income threshold
         aow_tarief = premie_data['aow_tarief']
         anw_tarief = premie_data['anw_tarief']
         wlz_tarief = premie_data['wlz_tarief']
-        totaal_tarief = premie_data['totaal_tarief']
         maximaal_inkomen = premie_data['maximaal_inkomen']
-        maximaal_premie = premie_data['maximaal_premie']
+
+        # Calculate the total premium rate
+        totaal_tarief = aow_tarief + anw_tarief + wlz_tarief
 
         # Calculate the premiums
         if brutojaarsalaris > maximaal_inkomen:
-            # If income exceeds the maximum threshold, use the maximum premium
-            premie_aow = maximaal_premie * (aow_tarief / totaal_tarief)
-            premie_anw = maximaal_premie * (anw_tarief / totaal_tarief)
-            premie_wlz = maximaal_premie * (wlz_tarief / totaal_tarief)
+            # If income exceeds the maximum threshold, use the maximum income
+            premie_aow = (aow_tarief / 100) * maximaal_inkomen
+            premie_anw = (anw_tarief / 100) * maximaal_inkomen
+            premie_wlz = (wlz_tarief / 100) * maximaal_inkomen
         else:
             # Calculate premiums based on the income
-            premie_aow = brutojaarsalaris * (aow_tarief / 100)
-            premie_anw = brutojaarsalaris * (anw_tarief / 100)
-            premie_wlz = brutojaarsalaris * (wlz_tarief / 100)
+            premie_aow = (aow_tarief / 100) * brutojaarsalaris
+            premie_anw = (anw_tarief / 100) * brutojaarsalaris
+            premie_wlz = (wlz_tarief / 100) * brutojaarsalaris
 
         # Round the premiums to 2 decimal places
         premie_aow = round(premie_aow, 2)

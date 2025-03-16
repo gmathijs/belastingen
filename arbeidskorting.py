@@ -5,12 +5,17 @@ class ArbeidskortingCalculator:
         self.conn = sqlite3.connect('mijn_belastingen.db')
         self.cursor = self.conn.cursor()
 
-    def get_arbeidskortingschijf(self, brutojaarsalaris, year):
+    def get_arbeidskortingschijf(self, brutojaarsalaris, year, aow_age):
+
+
+        # Treat aow_age = 2 as aow_age = 1
+        effective_aow_age = 1 if aow_age == 2 else aow_age
+
         self.cursor.execute("""
             SELECT bracket_number, lower_limit, upper_limit, base_credit, credit_percentage
             FROM tax_arbeidskorting
-            WHERE year = ? AND lower_limit <= ? AND upper_limit >= ?
-        """, (year, brutojaarsalaris, brutojaarsalaris))
+            WHERE year = ? AND aow_age = ? AND lower_limit <= ? AND upper_limit >= ?
+        """, (year, effective_aow_age, brutojaarsalaris, brutojaarsalaris))
         result = self.cursor.fetchone()
         if result:
             return {
@@ -22,8 +27,8 @@ class ArbeidskortingCalculator:
             }
         return None
 
-    def bereken_arbeidskorting(self, brutojaarsalaris, year):
-        relevante_schijf = self.get_arbeidskortingschijf(brutojaarsalaris, year)
+    def bereken_arbeidskorting(self, brutojaarsalaris, year, aow_age):
+        relevante_schijf = self.get_arbeidskortingschijf(brutojaarsalaris, year, aow_age)
         if not relevante_schijf:
             raise ValueError(f"No arbeidskorting bracket found for year {year} and income {brutojaarsalaris}")
 

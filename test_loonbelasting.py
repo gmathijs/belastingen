@@ -8,7 +8,7 @@ def test_loonbelasting():
     loonbelastingen = []
 
     for income in incomes:
-        loonbelasting = calculator.bereken_loonheffing(income, 2023)
+        loonbelasting = calculator.bereken_loonheffing(income, 2023,0)
         loonbelastingen.append(loonbelasting)
 
     # Create a table
@@ -21,7 +21,7 @@ def test_loonbelasting():
 
     # Plot the graph
     plt.figure(figsize=(10, 6))
-    plt.plot(incomes, loonbelastingen, marker='o', linestyle='-', color='b')
+    plt.plot(incomes, loonbelastingen, linestyle='-', color='b')
     plt.title('Loonbelasting vs Income (2023)')
     plt.xlabel('Income (€)')
     plt.ylabel('Loonbelasting (€)')
