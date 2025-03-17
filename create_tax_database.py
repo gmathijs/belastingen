@@ -11,6 +11,7 @@ cursor.execute("DROP TABLE IF EXISTS tax_arbeidskorting")
 cursor.execute("DROP TABLE IF EXISTS tax_vermogensbelasting")
 cursor.execute("DROP TABLE IF EXISTS tax_premies_volksverzekeringen")
 cursor.execute("DROP TABLE IF EXISTS tax_box3")
+cursor.execute("DROP TABLE IF EXISTS tbl_eigenwoningforfait")
 
 # Create the tax_loonheffing table
 cursor.execute("""
@@ -93,7 +94,7 @@ cursor.execute("""
     )
 """)
 
-# Create the table eigenwonng forfait
+# Create the table eigenwoning forfait
 cursor.execute("""
     CREATE TABLE tbl_eigenwoningforfait (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -392,16 +393,18 @@ cursor.executemany("""
 # Insert data into the tax_box3 table
 tax_box3_data = [
     # Year, perc_spaargeld, perc_belegging, perc_schuld, perc_box3, heffingsvrij_vermogen, drempel_schuld
-    (2025, 0.0144, 0.0588, 0.0262, 0.36, 57684,  3200),
+    (2025, 0.0144, 0.0588, 0.0262, 0.36, 57684,  3700),
     (2024, 0.0144, 0.0604, 0.0261, 0.36, 57000,  3700),
     (2023, 0.0092, 0.0617, 0.0246, 0.32, 57000,  3400),
-    (2022, 0.0000, 0.0553, 0.0228, 0.31, 50650,  3000),
-    (2021, 0.0001, 0.0569, 0.0246, 0.30, 50000,  3000),
+    (2022, 0.0000, 0.0553, 0.0228, 0.31, 50650,  3200),
+    (2021, 0.0001, 0.0569, 0.0246, 0.30, 50000,  3200),
     (2020, 0.0004, 0.0528, 0.0274, 0.30, 30846,  3000),
     (2019, 0.0008, 0.0559, 0.0300, 0.33, 30360,  3000),
-    (2018, 0.0012, 0.0538, 0.0320, 0.33, 30360,  3000),
-    (2017, 0.0025, 0.0539, 0.0343, 0.33, 30360,   3000)
+    (2018, 0.0012, 0.0539, 0.0320, 0.33, 30360,  3000),
+    (2017, 0.0025, 0.0538, 0.0343, 0.33, 30360,  3000)
 ]
+# Data 2024 - 2021 gecontroleerd op belastingdienst.nl 2020 en lager is de oude methode toegepast 
+# 2025 is nog een raadsel
 
 cursor.executemany("""
     INSERT INTO tax_box3 (year, perc_spaargeld, perc_belegging, perc_schuld, perc_box3, heffingsvrij_vermogen, drempel_schuld)
@@ -415,7 +418,35 @@ tbl_eigenwoning =[
     (2024, 3, 50000, 0.002, 0),
     (2024, 4, 75000, 0.0025, 0),
     (2024, 5, 1310000, 0.0035, 0),
-    (2024, 6, 99000000, 0.00235, 4586)
+    (2024, 6, 99000000, 0.00235, 4586),
+    #2023
+    (2023, 1, 12500, 0.0, 0),
+    (2023, 2, 25000, 0.001, 0),
+    (2023, 3, 50000, 0.002, 0),
+    (2023, 4, 75000, 0.0025, 0),
+    (2023, 5, 1130000, 0.0035, 0),
+    (2023, 6, 99000000, 0.00235, 4200),
+    #2022
+    (2022, 1, 12500, 0.0, 0),
+    (2022, 2, 25000, 0.0015, 0),
+    (2022, 3, 50000, 0.0025, 0),
+    (2022, 4, 75000, 0.0035, 0),
+    (2022, 5, 1130000, 0.0045, 0),
+    (2022, 6, 99000000, 0.00235, 5085),
+    #2021
+    (2021, 1, 12500, 0.0, 0),
+    (2021, 2, 25000, 0.002, 0),
+    (2021, 3, 50000, 0.002, 0),
+    (2021, 4, 75000, 0.004, 0),
+    (2021, 5, 1110000, 0.005, 0),
+    (2021, 6, 99000000, 0.00235, 5550),
+    #2020
+    (2020, 1, 12500, 0.0, 0),
+    (2020, 2, 25000, 0.002, 0),
+    (2020, 3, 50000, 0.0035, 0),
+    (2020, 4, 75000, 0.0045, 0),
+    (2020, 5, 1090000, 0.006, 0),
+    (2020, 6, 99000000, 0.00235, 6540)
 ]
 
 cursor.executemany("""
