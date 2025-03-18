@@ -1,57 +1,88 @@
 +-------------------------------------+-------------------------+
-| Description                         | Amount                  |
+| Inkomen Werk en Woning              |                  Amount |
 +-------------------------------------+-------------------------+
-| Inkomen uit arbeid                  | €50,000.00              |
-| Pensioen of uitkering               | €0.00                   |
+| Totaal Bruto Inkomen                |                 €50,000 |
+| Inkomsten Eigen Woning              |                  €1,106 |
+| Aftrekbare Uitgaven eigen Woning    |                  €2,000 |
+| - Eigen Woning toerekenen           |                    100% |
 | ----------------------------------- | ----------------------- |
-| Loonheffing                         | €11,665.46              |
-| Heffingskorting                     | €873.35                 |
-| Arbeidskorting                      | €2,516.79               |
-| Netto Inkomen                       | €41,724.68              |
+| Inkomen Werk en Woning              |                 €49,106 |
 +-------------------------------------+-------------------------+
 +-------------------------------------+-------------------------+
-| Description                         | Amount                  |
+| Box3 Summary                        |                  Bedrag |
 +-------------------------------------+-------------------------+
-| AOW Premie                          | €0                      |
-| ANW Premie                          | €38                     |
-| WLZ Premie                          | €3,676                  |
-| Premies Totaal                      | €3,715                  |
+| Totaal vermogen                     |                €222,498 |
+| Grondslag sparen en beleggen        |                €105,898 |
+| Uw deel                             |                    100% |
+| ----------------------------------- | ----------------------- |
+| Mijn grondslag sparen en beleggen   |                €105,898 |
+| Rendements grondslag uw aandeel     |                   48.2% |
+| Box 3 Belasting percentage          |                     36% |
+| BOX 3 BELASTING                     |                  €1,436 |
++-------------------------------------+-------------------------+
++-------------------------------------+-------------------------+
+| Box1 berekening                     |                  Amount |
++-------------------------------------+-------------------------+
+| Inkomen uit arbeid                  |                 €50,000 |
+| Pensioen of uitkering               |                      €0 |
+| Inkomen werk en woning              |                 €49,106 |
+| ----------------------------------- | ----------------------- |
+| Loonheffing                         |                 €11,665 |
+| Heffingskorting                     |                    €873 |
+| Arbeidskorting                      |                  €2,517 |
+| EigenWoning Forfait                 |                  €2,517 |
+| Netto Inkomen                       |                 €41,725 |
++-------------------------------------+-------------------------+
++-------------------------------------+-------------------------+
+| Premies Volksverzekering            |                  Bedrag |
++-------------------------------------+-------------------------+
+| AOW Premie                          |                      €0 |
+| ANW Premie                          |                     €38 |
+| WLZ Premie                          |                  €3,676 |
+| Premies Totaal                      |                  €3,715 |
 | ----------------------------------- | ----------------------- |
 +-------------------------------------+-------------------------+
 +-------------------------------------+-------------------------+
-| Description                         | Amount                  |
+| Box3 (nieuw)                        |                  Bedrag |
 +-------------------------------------+-------------------------+
-| Fiscale partner                     | Yes                     |
+| Fiscale partner                     |                     Yes |
 | Vermogen                            |                         |
-| Bank en Spaargeld                   | €109,929                |
-| Beleggingen                         | €69,569                 |
-| Ontroerende zaken in NL             | €43,000                 |
-| Totaal vermogen                     | €222,498                |
+| Bank en Spaargeld                   |                €109,929 |
+| Beleggingen                         |                 €69,569 |
+| Ontroerende zaken in NL             |                 €43,000 |
+| Totaal vermogen                     |                €222,498 |
 | ----------------------------------- | ----------------------- |
 | Forfaitair rendement vermogen       |                         |
-| Spaargeld                           | €1,583                  |
-| Beleggingen                         | €4,202                  |
-| Ontroerende zaken in NL             | €2,597                  |
-| Belastbaar rendement op vermogen    | €8,382                  |
+| Spaargeld                           |                  €1,583 |
+| Beleggingen                         |                  €4,202 |
+| Ontroerende zaken in NL             |                  €2,597 |
+| Belastbaar rendement op vermogen    |                  €8,382 |
 | ----------------------------------- | ----------------------- |
-| Schulden                            | €10,000                 |
-| Drempel schulden                    | €7,400                  |
-| Totaal schulden                     | €2,600                  |
-| Belastbaar rendement op schulden    | €67                     |
+| Schulden                            |                 €10,000 |
+| Drempel schulden                    |                  €7,400 |
+| Totaal schulden                     |                  €2,600 |
+| Belastbaar rendement op schulden    |                     €67 |
 | ----------------------------------- | ----------------------- |
-| Totaal rendementsgrondslag          | €219,898                |
-| Totaal Belastbaar rendement         | €8,315                  |
+| Totaal rendementsgrondslag          |                €219,898 |
+| Totaal Belastbaar rendement         |                  €8,315 |
 | ----------------------------------- | ----------------------- |
-| Heffingsvrij vermogen               | €114,000                |
-| Grondslag sparen en beleggen        | €105,898                |
+| Heffingsvrij vermogen               |                €114,000 |
+| Grondslag sparen en beleggen        |                €105,898 |
 | ------------------------------      | ----------------------- |
 | Verdeling                           |                         |
-| Uw deel                             | 100%                    |
-| Mijn grondslag sparen en beleggen   | €105,898                |
-| Rendements grondslag uw aandeel     | 48.2%                   |
+| Uw deel                             |                    100% |
+| Mijn grondslag sparen en beleggen   |                €105,898 |
+| Rendements grondslag uw aandeel     |                   48.2% |
 | ----------------------------------- | ----------------------- |
-| Rendements Percentage               | 3.77%                   |
-| Totaal voordeel Sparen en Beleggen  | €3,989                  |
-| Box 3 Belasting percentage          | 36%                     |
-| BOX 3 BELASTING                     | €1,436                  |
+| Rendements Percentage               |                   3.77% |
+| Totaal voordeel Sparen en Beleggen  |                  €3,989 |
+| Box 3 Belasting percentage          |                     36% |
+| BOX 3 BELASTING                     |                  €1,436 |
++-------------------------------------+-------------------------+
++-------------------------------------+-------------------------+
+| Ouderen Korting                     |                  Bedrag |
++-------------------------------------+-------------------------+
+| VerzamelInkomen                     |                 €53,095 |
+| Ouderenkorting                      |                  €3,259 |
+| ----------------------------------- | ----------------------- |
 +-------------------------------------+-------------------------+

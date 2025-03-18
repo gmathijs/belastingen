@@ -393,6 +393,7 @@ class EigenWoningForfaitCalculator:
                 'percentage': result[2],
                 'bedrag': result[3]
             }
+        
         return None
 
     def bereken_eigenwoningforfait(self, WOZ_Waarde, year):
@@ -431,26 +432,46 @@ class EigenWoningForfaitCalculator:
             last_schijf = schijven[-1]
             eigenwoningforfait = last_schijf[3] + last_schijf[2] * (WOZ_Waarde - last_schijf[1])
 
-        # Convert the dictionary to a list of tuples for tabulate
-        table_woz = [
-            ["WOZ Waarde Eigen Woning", f"€{WOZ_Waarde:.0f}"],
-            ["Inkomsten Eigen Woning", f"€{eigenwoningforfait:.0f}"],
-            ["-" * 35, "-" * 23]  # Another separator line
-        ]
-        # Render the table
-        table = tabulate(table_woz, 
-                         headers=["Description", "Amount"], 
-                         tablefmt="pretty",
-                         colalign=("left", "left")
-                         )
-        # Create the table with specified column widths
-        print(table)
-
-
-        return table
+        return eigenwoningforfait
+    
 
     def close(self):
         """
         Close the database connection.
         """
+        self.conn.close()
+
+class ouderenKorting:
+    """class description"""
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self.conn = sqlite3.connect(db_path)
+        self.cursor = self.conn.cursor()
+
+    def calculate_korting(self, verzamelinkomen, year, aow):
+        """function description"""
+        if not aow:
+            return 0
+
+        self.cursor.execute("""
+            SELECT lower_limit, upper_limit, bedrag, perc
+            FROM tbl_ouderenkorting
+            WHERE year = ? AND ? >= lower_limit AND ? < upper_limit
+        """, (year, verzamelinkomen, verzamelinkomen))
+
+        result = self.cursor.fetchone()
+        if result:
+            lower_limit, upper_limit, bedrag, perc = result
+            korting = bedrag + perc * (verzamelinkomen - lower_limit - 1)
+        else:
+            korting = 0
+
+        return {
+            'Verzamelinkomen': verzamelinkomen,
+            'Ouderenkorting': korting
+        }
+
+
+    def close(self):
+        """function description"""
         self.conn.close()

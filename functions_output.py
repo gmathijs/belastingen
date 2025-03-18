@@ -1,18 +1,35 @@
 """Output Modules """
 import os
-from tabulate import tabulate
+import csv
+import json
+from tabulate import tabulate 
 
-def handle_output(results_box1, results_box3, premies):
+
+def handle_output(all_results):
     """
     Format and export the Box 3 tax calculation results.
     """
+    # Extract individual results from the dictionary
+    input = all_results['input']
+    results_box1a = all_results['box1a']  
+    results_box1 = all_results['box1']
+    results_box3 = all_results['box3']
+    premies = all_results['premies']
+    ouderenkorting = all_results['ouderenkorting']
+    
     # Format and display the results as a table
-    table1 = format_table_box1(results_box1)
-    table2 = format_table_premies(premies)
-    table3 = format_table_box3(results_box3)
-    print(table1)
+    table1 = format_table_box1a(results_box1a)          #Inkomen werk en Woning"
+    table4a = format_table_box3_grof(results_box3)      #Box 3 Inkomsten Belasting Grof"
+    table2 = format_table_box1(results_box1)
+    table3 = format_table_premies(premies)
+    table4 = format_table_box3(results_box3)
+    table5 = format_table_ok(ouderenkorting)
+    print(table1)   
+    print(table4a)
     print(table2)
     print(table3)
+    print(table4)
+    print(table5)
 
     # Define the file name
     filename = "taxes.txt"
@@ -23,8 +40,11 @@ def handle_output(results_box1, results_box3, premies):
     # Write the table to a text file
     with open(filename, "w", encoding="utf-8") as file:
         file.write(table1+"\n")
+        file.write(table4a+"\n")       
         file.write(table2+"\n")
-        file.write(table3)
+        file.write(table3+"\n")
+        file.write(table4+"\n")
+        file.write(table5)
 
     # Open the text file automatically (Mac-specific)
     os.system(f"open {filename}")  # This works on macOS
@@ -39,22 +59,56 @@ def format_table_box1(data):
     Format the Box 1 results as a table.
     """
     table_data = [
-        ["Inkomen uit arbeid", f"€{data['Inkomen uit arbeid']:,.2f}"],
-        ["Pensioen of uitkering", f"€{data['Pensioen of uitkering']:,.2f}"],
+        ["Inkomen uit arbeid", f"€{data['Inkomen uit arbeid']:,.0f}"],
+        ["Pensioen of uitkering", f"€{data['Pensioen of uitkering']:,.0f}"],
+        ["Inkomen werk en woning", f"€{data['Inkomen uit Werk en Woning']:,.0f}"],
         ["-" * 35, "-" * 23],  # Separator line
-        ["Loonheffing", f"€{data['loonheffing']:,.2f}"],
-        ["Heffingskorting", f"€{data['heffingskorting']:,.2f}"],
-        ["Arbeidskorting", f"€{data['arbeidskorting']:,.2f}"],
-        ["Netto Inkomen", f"€{data['netto_inkomen']:,.2f}"]
+        ["Loonheffing", f"€{data['loonheffing']:,.0f}"],
+        ["Heffingskorting", f"€{data['heffingskorting']:,.0f}"],
+        ["Arbeidskorting", f"€{data['arbeidskorting']:,.0f}"],
+        ["EigenWoning Forfait", f"€{data['arbeidskorting']:,.0f}"],       
+        ["Netto Inkomen", f"€{data['netto_inkomen']:,.0f}"]
     ]
 
     # Format the table with left alignment and pretty formatting
-    table = tabulate(table_data, headers=["Description", "Amount"], tablefmt="pretty", colalign=("left", "left"))
+    table = tabulate(table_data, headers=["Box1 berekening", "Amount"], tablefmt="pretty", colalign=("left", "right"))
     return table
+
+def format_table_box1a(data):
+    """
+    Format the Box 1 results as a table.
+    """
+    table_data = [
+        ["Totaal Bruto Inkomen ", f"€{data['BrutoInkomen']:,.0f}"],
+        ["Inkomsten Eigen Woning", f"€{data['EigenWoningForfait']:,.0f}"],
+        ["Aftrekbare Uitgaven eigen Woning", f"€{data['AftrekbareUitgavenEigenwoning']:,.0f}"],
+        ["- Eigen Woning toerekenen", f"{data['UwDeel']*100:.0f}%"],
+        ["-" * 35, "-" * 23],  # Separator line
+        ["Inkomen Werk en Woning", f"€{data['InkomenWerkenWoning']:,.0f}"]
+    ]
+
+    # Format the table with left alignment and pretty formatting
+    table = tabulate(table_data, headers=["Inkomen Werk en Woning", "Amount"], tablefmt="pretty", colalign=("left", "right"))
+    return table
+
+def format_table_ok(data):
+    """
+    Format the ouderenkorting results as a table. 
+    """
+    table_data = [
+        ["VerzamelInkomen", f"€{data['Verzamelinkomen']:,.0f}"],
+        ["Ouderenkorting", f"€{data['Ouderenkorting']:,.0f}"],
+        ["-" * 35, "-" * 23]  # Separator line
+    ]
+
+    # Format the table with left alignment and pretty formatting
+    table = tabulate(table_data, headers=["Ouderen Korting", "Bedrag"], tablefmt="pretty", colalign=("left", "right"))
+    return table
+
 
 def format_table_premies(data):
     """
-    Format the premies results as a table. 
+    Format the premies volksverzekeringen results as a table. 
     """
     table_data = [
         ["AOW Premie", f"€{data['premie_aow']:,.0f}"],
@@ -65,12 +119,13 @@ def format_table_premies(data):
     ]
 
     # Format the table with left alignment and pretty formatting
-    table = tabulate(table_data, headers=["Description", "Amount"], tablefmt="pretty", colalign=("left", "left"))
+    table = tabulate(table_data, headers=["Premies Volksverzekering", "Bedrag"], tablefmt="pretty", colalign=("left", "right"))
     return table
 
 def format_table_box3(data):
     """
     Format the results as a table using tabulate.
+    This lists all the details of Box 3
     """
     table_data = [
         ["Fiscale partner", data["Fiscale partner"]],
@@ -109,23 +164,44 @@ def format_table_box3(data):
     ]
 
     # Format the table with left alignment and pretty formatting
-    table = tabulate(table_data, headers=["Description", "Amount"], tablefmt="pretty", colalign=("left", "left"))
+    table = tabulate(table_data, headers=["Box3 (nieuw)", "Bedrag"], tablefmt="pretty", colalign=("left", "right"))
     return table
+
+def format_table_box3_grof(data):
+    """
+    Format the results as a table using tabulate.
+    This is the summary of Box 3
+    """
+    table_data = [
+        ["Totaal vermogen", f"€{data['Vermogen']['Totaal vermogen']:,.0f}"],
+        ["Grondslag sparen en beleggen", f"€{data['Grondslag sparen en beleggen']:,.0f}"],
+        ["Uw deel", data['Verdeling']['Uw deel']],
+        ["-" * 35, "-" * 23],  # Separator line
+        ["Mijn grondslag sparen en beleggen", f"€{data['Verdeling']['Mijn grondslag sparen en beleggen']:,.0f}"],
+        ["Rendements grondslag uw aandeel", data['Verdeling']['Rendements grondslag uw aandeel']],
+        ["Box 3 Belasting percentage", data['Box 3 Belasting percentage']],
+        ["BOX 3 BELASTING", f"€{data['BOX 3 BELASTING']:,.0f}"]
+    ]
+
+    # Format the table with left alignment and pretty formatting
+    table = tabulate(table_data, headers=["Box3 Summary", "Bedrag"], tablefmt="pretty", colalign=("left", "right"))
+    return table
+
 
 def export_to_json(data, filename):
     """
     Export the results to a JSON file.
     """
-    import json
-    with open(filename, 'w') as f:
+
+    with open(filename, 'w',encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
 def export_to_csv(data, filename):
     """
     Export the results to a CSV file.
     """
-    import csv
-    with open(filename, 'w', newline='') as f:
+
+    with open(filename, 'w', newline='',encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["Description", "Amount"])
         for key, value in data.items():

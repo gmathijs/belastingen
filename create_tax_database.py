@@ -12,6 +12,7 @@ cursor.execute("DROP TABLE IF EXISTS tax_vermogensbelasting")
 cursor.execute("DROP TABLE IF EXISTS tax_premies_volksverzekeringen")
 cursor.execute("DROP TABLE IF EXISTS tax_box3")
 cursor.execute("DROP TABLE IF EXISTS tbl_eigenwoningforfait")
+cursor.execute("DROP TABLE IF EXISTS tbl_ouderenkorting")
 
 # Create the tax_loonheffing table
 cursor.execute("""
@@ -103,6 +104,21 @@ cursor.execute("""
         limit_WOZ REAL NOT NULL,
         percentage REAL NOT NULL,
         bedrag REAL NOT NULL
+    );
+""")
+
+
+
+# Create the table ouderenkorting forfait
+cursor.execute("""
+    CREATE TABLE tbl_ouderenkorting (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        year INTEGER NOT NULL,
+        schijf_no INTEGER NOT NULL,
+        lower_limit REAL NOT NULL,
+        upper_limit REAL NOT NULL,
+        bedrag REAL NOT NULL,
+        perc REAL NOT NULL
     );
 """)
 
@@ -449,12 +465,25 @@ tbl_eigenwoning =[
     (2020, 6, 99000000, 0.00235, 6540)
 ]
 
+
+
+
 cursor.executemany("""
     INSERT INTO tbl_eigenwoningforfait(year, schijf_no, limit_WOZ, percentage, bedrag)
     VALUES (?, ?, ?, ?, ? )
 """, tbl_eigenwoning)
 
+# Insert data into the tbl_eigenwoningforfait table
+tbl_ouderenkorting =[
+    (2024, 1,        0,   44771,  2010,   0),
+    (2024, 2,    44771,   58170,  2010, .15),
+    (2024, 3,    58710,99999999,     0,   0)
+]
 
+cursor.executemany("""
+    INSERT INTO tbl_ouderenkorting(year, schijf_no, lower_limit, upper_limit, bedrag, perc)
+    VALUES (?, ?, ?, ?, ?, ? )
+""", tbl_ouderenkorting)
 
 # Commit the changes
 conn.commit()
