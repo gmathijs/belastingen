@@ -14,7 +14,7 @@ from classes_IB import (
     VermogensBelastingCalculator,
     LoonbelastingCalculator,
     ArbeidskortingCalculator,
-    ouderenKorting, EigenWoningForfaitCalculator
+    OuderenKorting, EigenWoningForfaitCalculator
 )
 def calculate_box1(input_data):
     """
@@ -47,7 +47,7 @@ def calculate_box1(input_data):
 
     # Bereken de ouderen korting moet gebaseerd zijn op het verzamel inkomen wat weer op zijn beurt 
     # kan worden bereken na box3
-    calculator_ok = ouderenKorting(input_data["db_path"])
+    calculator_ok = OuderenKorting(input_data["db_path"])
     verzamelinkomen = input_data["Inkomen"] + input_data["Pensioen"]  # Nog goed uitrekenen
     results_ouderenkorting = calculator_ok.calculate_korting(verzamelinkomen,  input_data["year"], input_data["aow_er"])
     ouderenkorting = results_ouderenkorting["Ouderenkorting"] 
@@ -144,7 +144,7 @@ def calculate_ouderenkorting(input_data, verzamelinkomen):
     Berekent de ouderenkorting op basis van het verzamelinkomen
     """
     # Initialize the calculator
-    calculator_ok = ouderenKorting(input_data["db_path"])
+    calculator_ok = OuderenKorting(input_data["db_path"])
 
     # Perform the calculation
     results_ouderenkorting = calculator_ok.calculate_korting(verzamelinkomen,  input_data["year"], input_data["aow_er"])
@@ -171,7 +171,7 @@ def calculate_ew_forfait(input_data):
 
 def calculate_verzamelinkomen(InkomenWerkWoning, VoordeelBox3):
     """
-    Berekent het vrezamel Inkomen
+    Berekent het verzamel Inkomen
     """
 
     verzamelinkomen = InkomenWerkWoning + VoordeelBox3

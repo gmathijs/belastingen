@@ -5,8 +5,10 @@
 """
 from functions_output import handle_output
 from functions_input import get_user_input
-from function_calculations import calculate_box1, calculate_box3, calculate_premies, calculate_ouderenkorting, calculate_inkomen_werkenwoning, calculate_verzamelinkomen
-
+from function_calculations import (calculate_box1, calculate_box3, calculate_premies, 
+                                   calculate_ouderenkorting, calculate_inkomen_werkenwoning, 
+                                   calculate_verzamelinkomen
+)
 
 def main():
     """ Main program """
@@ -32,7 +34,7 @@ def main():
         'verzamelinkomen': verzamelinkomen
     }
     # Step 3: Handle output (formatting and exporting)
-    handle_output(all_results)
+    handle_output(all_results)   #functions_output
 
 if __name__ == "__main__":
     main()

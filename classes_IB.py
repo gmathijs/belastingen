@@ -8,6 +8,7 @@ The following classes are incorporated
 4: class ArbeidskortingCalculator:
 5: class PremiesVolksverzekeringen:
 6: class EigenWoningForfaitCalculator:
+7: class OuderenKorting:
 """
 import sqlite3
 import math
@@ -441,7 +442,7 @@ class EigenWoningForfaitCalculator:
         """
         self.conn.close()
 
-class ouderenKorting:
+class OuderenKorting:
     """class description"""
     def __init__(self, db_path):
         self.db_path = db_path

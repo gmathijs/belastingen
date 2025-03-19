@@ -16,15 +16,19 @@ def handle_output(all_results):
     results_box3 = all_results['box3']
     premies = all_results['premies']
     ouderenkorting = all_results['ouderenkorting']
+
     
     # Format and display the results as a table
+    table_all = format_table_all(all_results)
     table1 = format_table_box1a(results_box1a)          #Inkomen werk en Woning"
     table4a = format_table_box3_grof(results_box3)      #Box 3 Inkomsten Belasting Grof"
     table2 = format_table_box1(results_box1)
     table3 = format_table_premies(premies)
     table4 = format_table_box3(results_box3)
     table5 = format_table_ok(ouderenkorting)
-    print(table1)   
+
+    print(table_all)
+    print(table1) 
     print(table4a)
     print(table2)
     print(table3)
@@ -39,12 +43,13 @@ def handle_output(all_results):
 
     # Write the table to a text file
     with open(filename, "w", encoding="utf-8") as file:
-        file.write(table1+"\n")
-        file.write(table4a+"\n")       
-        file.write(table2+"\n")
-        file.write(table3+"\n")
-        file.write(table4+"\n")
-        file.write(table5)
+        file.write(table_all+"\n")        
+        #file.write(table1+"\n")
+        #file.write(table4a+"\n")       
+        #file.write(table2+"\n")
+        #file.write(table3+"\n")
+        #file.write(table4+"\n")
+        #file.write(table5)
 
     # Open the text file automatically (Mac-specific)
     os.system(f"open {filename}")  # This works on macOS
@@ -53,10 +58,74 @@ def handle_output(all_results):
     # Export the results to JSON and CSV
     # export_to_json(results_box3, "box3_results.json")
     # export_to_csv(results_box3, "box3_results.csv")
+def format_table_all(data):
+    """
+    Format the Box 1 results as a table.
+    """
+    table_data = [
+        ["Overzicht Opgaven voor berekening", " "],
+        ["Inkomen uit Arbeid", f"€{data['input']['Inkomen']:,.0f}"],
+        ["Pensioen of uitkering", f"€{data['input']['Pensioen']:,.0f}"],
+        ["WOZ Waarde Woning", f"€{data['input']['WOZ_Waarde']:,.0f}"],
+        ["Aftrekbare Schulden ", f"€{data['input']['AftrekEW']:,.0f}"],  
+        ["-       Verdeling U neemt", f"{data['input']['deel_box1']*100:,.0f}%"],  
+        ["AOW Gerechtigd ", "Yes" if data['input']['aow_er'] else "No"],     
+        ["Heeft u een fiscale partner ", "Yes" if data['input']['heeft_partner'] else "No"],                      
+        ["-" * 35, "-" * 23],  # Separator line
+
+        [" ", " "],  # empty line
+        ["Overzicht Werk en Woning", " "],
+        ["Inkomen uit arbeid", f"€{data['box1']['Inkomen uit arbeid']:,.0f}"],
+        ["Pensioen of uitkering", f"€{data['box1']['Pensioen of uitkering']:,.0f}"],
+        ["Inkomen werk en woning", f"€{data['box1a']['InkomenWerkenWoning']:,.0f}"],
+        ["-" * 35, "-" * 23],  # Separator line
+        [" ", " "],  # empty line
+
+        ["Belasting BOX 1", " "],       
+        ["Verzamelinkomen", f"€{data['verzamelinkomen']:,.0f}"],
+        ["Loonheffing", f"€{data['box1']['loonheffing']:,.0f}"],
+        ["Heffingskorting", f"€{data['box1']['heffingskorting']:,.0f}"],
+        ["Arbeidskorting", f"€{data['box1']['arbeidskorting']:,.0f}"],
+        ["Ouderenkorting", f"€{data['ouderenkorting']['Ouderenkorting']:,.0f}"],
+        ["Premies Totaal ", f"€{data['premies']['totale_premie']:,.0f}"],
+
+        ["EigenWoning Forfait", f"€{data['box1']['Eigenwoningforfait']:,.0f}"],       
+        ["Netto Inkomen", f"€{data['box1']['netto_inkomen']:,.0f}"],
+        ["-" * 35, "-" * 23],  # Separator line
+                [" ", " "],  # empty line
+
+
+        ["Box3 Vermogen ", "+"*23],
+        ["Overzicht Input Box3", " "],
+        ["Spaargeld", f"€{data['input']['spaargeld']:,.0f}"],
+        ["Beleggingen", f"€{data['input']['belegging']:,.0f}"],
+        ["Ontroerend goed", f"€{data['input']['ontroerend']:,.0f}"], 
+        ["-     Verdeling U neemt", f"{data['input']['uw_deel']*100:,.0f}%"],   
+        ["-" * 35, "-" * 23],  # Separator line
+
+        ["Overzicht Box 3 berekening", " "],
+        ["Totaal vermogen", f"€{data['box3']['Vermogen']['Totaal vermogen']:,.0f}"],
+        ["Grondslag sparen en beleggen", f"€{data['box3']['Grondslag sparen en beleggen']:,.0f}"],
+        ["Mijn grondslag sparen en beleggen", f"€{data['box3']['Verdeling']['Mijn grondslag sparen en beleggen']:,.0f}"],
+        ["Rendements grondslag uw aandeel", data['box3']['Verdeling']['Rendements grondslag uw aandeel']],
+        ["Box 3 Belasting percentage", data['box3']['Box 3 Belasting percentage']],
+        ["BOX 3 BELASTING", f"€{data['box3']['BOX 3 BELASTING']:,.0f}"],
+        ["-" * 35, "-" * 23],  # Separator line
+        [" ", " "]  # empty line
+
+
+    ]
+
+    # Format the table with left alignment and pretty formatting
+    table = tabulate(table_data, headers=["Belasting Jaar 2025", "Amount"], tablefmt="pretty", colalign=("left", "right"))
+    return table
+
+
 
 def format_table_box1(data):
     """
     Format the Box 1 results as a table.
+            ["Schulden", f"€{data['Schulden']['Schulden']:,.0f}"],
     """
     table_data = [
         ["Inkomen uit arbeid", f"€{data['Inkomen uit arbeid']:,.0f}"],
@@ -66,7 +135,7 @@ def format_table_box1(data):
         ["Loonheffing", f"€{data['loonheffing']:,.0f}"],
         ["Heffingskorting", f"€{data['heffingskorting']:,.0f}"],
         ["Arbeidskorting", f"€{data['arbeidskorting']:,.0f}"],
-        ["EigenWoning Forfait", f"€{data['arbeidskorting']:,.0f}"],       
+        ["EigenWoning Forfait", f"€{data['Eigenwoningforfait']:,.0f}"],       
         ["Netto Inkomen", f"€{data['netto_inkomen']:,.0f}"]
     ]
 
