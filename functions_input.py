@@ -5,7 +5,7 @@ def get_user_input():
     input_data = {
         "db_path": "mijn_belastingen.db",   # Path to the database
         "year": 2024,                       # Tax year
-        "aow_er": 1,                        # AOW status (0 = geen AOW, 1 = AOW na 1946, 2 = AOW voor 1946)
+        "aow_er": 0,                        # AOW status (0 = geen AOW, 1 = AOW na 1946, 2 = AOW voor 1946)
         "heeft_partner": True,              # Whether you have a fiscal partner
         "Inkomen": 50000,                   # Gross income
         "AftrekEW": 2000,                   # Aftrek eigen woning

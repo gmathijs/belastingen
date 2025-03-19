@@ -100,6 +100,7 @@ def format_table_all(data):
         ["Spaargeld", f"€{data['input']['spaargeld']:,.0f}"],
         ["Beleggingen", f"€{data['input']['belegging']:,.0f}"],
         ["Ontroerend goed", f"€{data['input']['ontroerend']:,.0f}"], 
+        ["Schulden box3", f"€{data['input']['schuld']:,.0f}"],         
         ["-     Verdeling U neemt", f"{data['input']['uw_deel']*100:,.0f}%"],   
         ["-" * 35, "-" * 23],  # Separator line
 

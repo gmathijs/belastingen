@@ -452,7 +452,11 @@ class OuderenKorting:
     def calculate_korting(self, verzamelinkomen, year, aow):
         """function description"""
         if not aow:
-            return 0
+            return {
+                'Verzamelinkomen': verzamelinkomen,
+                'Ouderenkorting': 0
+            }
+
 
         self.cursor.execute("""
             SELECT lower_limit, upper_limit, bedrag, perc
