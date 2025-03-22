@@ -13,6 +13,9 @@ cursor.execute("DROP TABLE IF EXISTS tax_premies_volksverzekeringen")
 cursor.execute("DROP TABLE IF EXISTS tax_box3")
 cursor.execute("DROP TABLE IF EXISTS tbl_eigenwoningforfait")
 cursor.execute("DROP TABLE IF EXISTS tbl_ouderenkorting")
+cursor.execute("DROP TABLE IF EXISTS tbl_tarief_aanpassing")
+
+
 
 # Create the tax_loonheffing table
 cursor.execute("""
@@ -120,6 +123,14 @@ cursor.execute("""
         bedrag REAL NOT NULL,
         perc REAL NOT NULL
     );
+""")
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tbl_tarief_aanpassing (
+        year INTEGER,
+        income_threshold REAL,
+        percentage REAL
+    )
 """)
 
 # Insert data into the tax_loonheffing table (example for 2023)
@@ -484,6 +495,23 @@ cursor.executemany("""
     INSERT INTO tbl_ouderenkorting(year, schijf_no, lower_limit, upper_limit, bedrag, perc)
     VALUES (?, ?, ?, ?, ?, ? )
 """, tbl_ouderenkorting)
+
+# Insert data into the tbl_tarief_aanpassing table
+tbl_tarief_aanpassing =[
+    (2025, 76817, 0.1201),  #Door de aanpassing krijgt u in 2025 over al uw aftrekposten in de hoogste belastingschijf maximaal 37,48% belasting 
+    (2024, 75518, 0.1253),  # 36.97%
+    (2023, 73031, 0.1257),  # 36.93%
+    (2022, 69399, 0.0950),  # 40%
+    (2021, 69507, 0.0065),  # 43%
+    (2020, 68507, 0.0350)   # 46%
+]
+
+cursor.executemany("""
+    INSERT INTO tbl_tarief_aanpassing(year, income_threshold, percentage)
+    VALUES (?, ?, ?)
+""", tbl_tarief_aanpassing)
+
+
 
 # Commit the changes
 conn.commit()

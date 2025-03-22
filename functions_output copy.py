@@ -18,80 +18,101 @@ def handle_output(all_results):
 
     # Extract individual results from the dictionary for the primary 
     input_data = merge_data(all_results['input'],all_results['input']['primary'])
-
+    results_box1a = all_results['primary']['box1a']  
+    results_box1 = all_results['primary']['box1']
+    results_box3 = all_results['primary']['box3']
+    premies = all_results['primary']['premies']
+    ouderenkorting = all_results['primary']['ouderenkorting']
     # Make up the output table 
     table_all_primary = format_table_all(input_data,all_results['primary'])
     print(table_all_primary)
     with open(filename, "w", encoding="utf-8") as file:
-        file.write("Primary Person Results:\n")
-        file.write(table_all_primary + "\n") 
+         file.write(table_all_primary+"\n")      
 
     # Extract individual results from the dictionary if partner exists 
     if input_data['heeft_partner']:
         input_data = merge_data(all_results['input'],all_results['input']['partner'])
-
+        results_box1a = all_results['partner']['box1a']  
+        results_box1 = all_results['partner']['box1']
+        results_box3 = all_results['partner']['box3']
+        premies = all_results['partner']['premies']
+        ouderenkorting = all_results['partner']['ouderenkorting']
         table_all_partner = format_table_all(input_data,all_results['partner'])
         print(table_all_partner)
-        with open(filename, "a", encoding="utf-8") as file:
-            file.write("\nPartner Results:\n")
-            file.write(table_all_partner + "\n")
+        with open(filename, "w", encoding="utf-8") as file:
+            file.write(table_all_partner+"\n")  
+
+
+    
+    # Format and display the results as a table
+    #table_all = format_table_all(input_data,all_results['primary'])
+    ###table2 = format_table_box1(results_box1)
+    #table3 = format_table_premies(premies)
+    #table4 = format_table_box3(results_box3)
+    #table5 = format_table_ok(ouderenkorting)
+
+
+    #print(table1) 
+    #print(table4a)
+    #print(table2)
+    #print(table3)
+    #print(table4)
+    #print(table5)
+
+
+
+    # Write the table to a text file
+    #with open(filename, "w", encoding="utf-8") as file:
+        #file.write(table_all+"\n")        
+        #file.write(table1+"\n")
+        #file.write(table4a+"\n")       
+        #file.write(table2+"\n")
+        #file.write(table3+"\n")
+        #file.write(table4+"\n")
+        #file.write(table5)
 
     # Open the text file automatically (Mac-specific)
     os.system(f"open {filename}")  # This works on macOS
 
-    # END GENERIC OUTPUT
-
-
-
+    
+    # Export the results to JSON and CSV
+    # export_to_json(results_box3, "box3_results.json")
+    # export_to_csv(results_box3, "box3_results.csv")
 def format_table_all(data_in,data_out):
     """
     Format the Box 1 results as a table.
     """
-
     table_data = [
-        ["Overzicht Opgaven voor berekening van ",data_in['naam']],
+        ["Overzicht Opgaven voor berekening", " "],
         ["Inkomen uit Arbeid", f"€{data_in['Inkomen']:,.0f}"],
         ["Pensioen of uitkering", f"€{data_in['Pensioen']:,.0f}"],
         ["WOZ Waarde Woning", f"€{data_in['WOZ_Waarde']:,.0f}"],
         ["Aftrekbare Schulden ", f"€{data_in['AftrekEW']:,.0f}"],  
         ["-       Verdeling U neemt", f"{data_in['deel_box1']*100:,.0f}%"],  
         ["AOW Gerechtigd ", "Yes" if data_in['aow_er'] else "No"],     
-        ["Heeft u een fiscale partner ", "Yes" if data_in['heeft_partner'] else "No"],   
-        ["Ingehouden dividend belasting", f"€{data_in['divident']:,.0f}"],     
-        ["Voorlopige aanslag al betaald", f"€{data_in['voorlopige_aanslag']:,.0f}"],                                    
+        ["Heeft u een fiscale partner ", "Yes" if data_in['heeft_partner'] else "No"],                      
         ["-" * 35, "-" * 23],  # Separator line
 
         [" ", " "],  # empty line
         ["Overzicht Werk en Woning", " "],
         ["Inkomen uit arbeid", f"€{data_out['box1']['Inkomen uit arbeid']:,.0f}"],
         ["Pensioen of uitkering", f"€{data_out['box1']['Pensioen of uitkering']:,.0f}"],
-        ["Aftrekbare rente Eigen Woning", f"€{data_out['box1a']['AftrekbareUitgavenEigenwoning']:,.0f}"],
-        ["Totaal inkomsten Eigen Woning", f"€{data_out['box1a']['TotaalEigenWoning']:,.0f}"],
-        ["Uw Deel", f"€{data_out['box1a']['UwDeel']:,.0f}"],
-        ["Totaal Inkomsten uit werk en woning", f"€{data_out['box1a']['InkomenWerkenWoning']:,.0f}"],
+        ["Inkomen werk en woning", f"€{data_out['box1a']['InkomenWerkenWoning']:,.0f}"],
         ["-" * 35, "-" * 23],  # Separator line
         [" ", " "],  # empty line
 
         ["Belasting BOX 1", " "],       
-        ["Verzamelinkomen", f"€{data_out['box1']['Verzamelinkomen']:,.0f}"],
-        ["Inkomsten Belasting Box1", f"€{data_out['box1']['loonheffing_excl']:,.0f}"],
-        ["Inkomsten Belasting Box3", f"€{data_out['box3']['BOX 3 BELASTING']:,.0f}"], 
-        ["Totaal Inkomsten Belasting", f"€{data_out['box1']['TotaalInkomstenbelasting']:,.0f}"],  
-        [" ", " "],  # empty line                
-        ["Premies Totaal ", f"€{data_out['premies']['totale_premie']:,.0f}"],
-        ["Box1 + Box3 (inc. premies)", f"€{data_out['box1']['TotaalInkomstenbelastingInclBox3']:,.0f}"],
-        ["Ingehouden dividend uw deel", f"€{data_out['box1']['Dividend uw deel']:,.0f}"], 
-        ["Ingehouden loonheffing incl dividend", f"€{data_out['box1']['ingehouden_belasting']:,.0f}"],        
-        ["Nieuw bedrag aanslag", f"€{data_out['box1']['Nieuw_bedrag_aanslag']:,.0f}"],   
-        [" ", " "],  # empty line
+        ["Verzamelinkomen", f"€{data_out['verzamelinkomen']:,.0f}"],
+        ["Loonheffing", f"€{data_out['box1']['loonheffing']:,.0f}"],
         ["Heffingskorting", f"€{data_out['box1']['heffingskorting']:,.0f}"],
-        ["Arbeidskorting", f"€{data_out['box1']['arbeidskorting']:,.0f}"],  
-        ["Ouderenkorting", f"€{data_out['box1']['ouderenkorting']:,.0f}"],
-        [" ", " "],  # empty line
+        ["Arbeidskorting", f"€{data_out['box1']['arbeidskorting']:,.0f}"],
+        ["Ouderenkorting", f"€{data_out['ouderenkorting']['Ouderenkorting']:,.0f}"],
+        ["Premies Totaal ", f"€{data_out['premies']['totale_premie']:,.0f}"],
 
-        [" ", " "],  # empty line  
+        ["EigenWoning Forfait", f"€{data_out['box1']['Eigenwoningforfait']:,.0f}"],       
+        ["Netto Inkomen", f"€{data_out['box1']['netto_inkomen']:,.0f}"],
         ["-" * 35, "-" * 23],  # Separator line
-        [" ", " "],  # empty line
+                [" ", " "],  # empty line
 
 
         ["Box3 Vermogen ", "+"*23],
@@ -108,9 +129,8 @@ def format_table_all(data_in,data_out):
         ["Grondslag sparen en beleggen", f"€{data_out['box3']['Grondslag sparen en beleggen']:,.0f}"],
         ["Mijn grondslag sparen en beleggen", f"€{data_out['box3']['Verdeling']['Mijn grondslag sparen en beleggen']:,.0f}"],
         ["Rendements grondslag uw aandeel", data_out['box3']['Verdeling']['Rendements grondslag uw aandeel']],
-        ["Voordeel uit sparen en beleggen", f"€{data_out['box3']['Totaal voordeel Sparen en Beleggen']:,.0f}"],
         ["Box 3 Belasting percentage", data_out['box3']['Box 3 Belasting percentage']],
-        ["Belasting Box3", f"€{data_out['box3']['BOX 3 BELASTING']:,.0f}"],
+        ["BOX 3 BELASTING", f"€{data_out['box3']['BOX 3 BELASTING']:,.0f}"],
         ["-" * 35, "-" * 23],  # Separator line
         [" ", " "]  # empty line
 
@@ -118,7 +138,7 @@ def format_table_all(data_in,data_out):
     ]
 
     # Format the table with left alignment and pretty formatting
-    table = tabulate(table_data, headers=[ f"Belasting Jaar {data_in['year']}", "Amount"], tablefmt="pretty", colalign=("left", "right"))
+    table = tabulate(table_data, headers=["Belasting Jaar 2025", "Amount"], tablefmt="pretty", colalign=("left", "right"))
     return table
 
 def format_table_box1(data):
@@ -286,13 +306,3 @@ def merge_data(general_data, person_data):
     merged_data = general_data.copy()  # Start with a copy of the general data
     merged_data.update(person_data)   # Add person-specific data
     return merged_data
-
-def combine_tables_side_by_side(table_primary, table_partner):
-    """
-    Combine two tables side by side.
-    """
-    combined_table = []
-    for row_primary, row_partner in zip(table_primary, table_partner):
-        combined_row = f"{row_primary}    |    {row_partner}"
-        combined_table.append(combined_row)
-    return combined_table

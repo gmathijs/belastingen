@@ -4,35 +4,61 @@
     GMa Last update 2025-03
 """
 from functions_output import handle_output
-from functions_input import get_user_input
+from functions_input import get_user_input, check_input
 from function_calculations import (calculate_box1, calculate_box3, calculate_premies, 
-                                   calculate_ouderenkorting, calculate_inkomen_werkenwoning, 
-                                   calculate_verzamelinkomen
+                                   calculate_inkomen_werkenwoning, 
 )
 
 def main():
     """ Main program """
     # Step 1: Get user input 
     input_data = get_user_input()
+    input_data = check_input(input_data)
 
-    # Step 2: Perform calculations the order is irrelevant
-    results_box1a = calculate_inkomen_werkenwoning(input_data)
-    results_box1 = calculate_box1(input_data)
-    results_premies = calculate_premies(input_data)
-    results_box3 = calculate_box3(input_data)
-    verzamelinkomen = calculate_verzamelinkomen (results_box1a['InkomenWerkenWoning'],results_box3['Totaal voordeel Sparen en Beleggen'])
-    results_ok = calculate_ouderenkorting(input_data, verzamelinkomen)
+    # Step 2: Perform calculations for the primary person
+    result1 = {}  # voor de belangrijkste tussen resulaten
+    results_1_box1a = calculate_inkomen_werkenwoning(input_data, input_data['primary'], result1)
+    # result1['inkomenwerkenwoning']  toegevoegd
+    results_1_box3 = calculate_box3(input_data, input_data['primary'],result1)
+    # result1['verzamelinkomen'] en tussenresultaat['InkomstenBelastinBox3']toegevoegd
+    results_1_premies = calculate_premies(input_data, input_data['primary'], result1)
+    # result1['totaalpremies'] toegevoegd
+    results_1_box1 = calculate_box1(input_data, input_data['primary'], result1)
 
-    # Gather all results into one dictionary
+
+    if input_data['primary']['heeft_partner']:
+        result2 = {}  # voor de belangrijkste tussen resulaten
+        results_2_box1a = calculate_inkomen_werkenwoning(input_data, input_data['partner'], result2)
+        # result2['inkomenwerkenwoning']  toegevoegd
+        results_2_box3 = calculate_box3(input_data, input_data['partner'],result2)
+        # result2['verzamelinkomen'] en tussenresultaat['InkomstenBelastinBox3'] toegevoegd
+        results_2_premies = calculate_premies(input_data, input_data['partner'], result2)
+        # result2['totaalpremies'] toegevoegd
+        results_2_box1 = calculate_box1(input_data, input_data['partner'], result2)
+
+    # Gather all results into one dictionary first for the primary person
     all_results = {
         'input': input_data,
-        'box1a': results_box1a,
-        'box1': results_box1,
-        'premies': results_premies,
-        'ouderenkorting': results_ok,
-        'box3': results_box3,
-        'verzamelinkomen': verzamelinkomen
+        'primary': {
+            'box1a': results_1_box1a,
+            'box1': results_1_box1,
+            'premies': results_1_premies,
+            'box3': results_1_box3,
+            }
     }
+
+    # Add partner data if applicable
+    if input_data['primary']['heeft_partner']:
+        all_results['partner'] = {
+            'box1a': results_2_box1a,
+            'box1': results_2_box1,
+            'premies': results_2_premies,
+            'box3': results_2_box3,
+        }
+    else:
+        all_results['partner'] = None  # or {}
+
+
     # Step 3: Handle output (formatting and exporting)
     handle_output(all_results)   #functions_output
 

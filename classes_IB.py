@@ -9,6 +9,7 @@ The following classes are incorporated
 5: class PremiesVolksverzekeringen:
 6: class EigenWoningForfaitCalculator:
 7: class OuderenKorting:
+8: class TariefAanpassingEigenWoning:
 """
 import sqlite3
 import math
@@ -90,7 +91,7 @@ class HeffingskortingCalculator:
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
 
-    def get_heffingskortingschijf(self, brutojaarsalaris, year, aow_age):
+    def get_heffingskortingschijf(self, inkomen_werk_woning, year, aow_age):
         """
         Fetch the tax credit bracket for the given year, income, and AOW age status.
         If aow_age is 2 (born before 1 January 1946), treat it as 1 (at/above AOW age).
@@ -102,7 +103,7 @@ class HeffingskortingCalculator:
             SELECT bracket_number, lower_limit, upper_limit, base_credit, credit_percentage
             FROM tax_heffingskorting
             WHERE year = ? AND aow_age = ? AND lower_limit <= ? AND upper_limit >= ?
-        """, (year, effective_aow_age, brutojaarsalaris, brutojaarsalaris))
+        """, (year, effective_aow_age, inkomen_werk_woning, inkomen_werk_woning))
         result = self.cursor.fetchone()
         if result:
             return {
@@ -114,16 +115,16 @@ class HeffingskortingCalculator:
             }
         return None
 
-    def bereken_heffingskorting(self, brutojaarsalaris, year, aow_age):
+    def bereken_heffingskorting(self, inkomen_werk_woning, year, aow_age):
         """
         Calculate the tax credit based on the given year, income, and AOW age status.
         """
-        relevante_schijf = self.get_heffingskortingschijf(brutojaarsalaris, year, aow_age)
+        relevante_schijf = self.get_heffingskortingschijf(inkomen_werk_woning, year, aow_age)
         if not relevante_schijf:
-            raise ValueError(f"No tax credit bracket found for year {year} and income {brutojaarsalaris}")
+            raise ValueError(f"No tax credit bracket found for year {year} and income {inkomen_werk_woning}")
 
         heffingskorting = relevante_schijf['base_credit'] + \
-                          relevante_schijf['credit_percentage'] * (brutojaarsalaris - relevante_schijf['lower_limit'])
+                          relevante_schijf['credit_percentage'] * (inkomen_werk_woning - relevante_schijf['lower_limit']-1)
 
         return round(heffingskorting, 2)
 
@@ -171,7 +172,7 @@ class ArbeidskortingCalculator:
             raise ValueError(f"No arbeidskorting bracket found for year {year} and income {brutojaarsalaris}")
 
         arbeidskorting = relevante_schijf['base_credit'] + \
-                         relevante_schijf['credit_percentage'] * (brutojaarsalaris - relevante_schijf['lower_limit'] )
+                         relevante_schijf['credit_percentage'] * (brutojaarsalaris - relevante_schijf['lower_limit'] -1 )
 
         return round(arbeidskorting, 2)
 
@@ -286,7 +287,7 @@ class VermogensBelastingCalculator:
             }
         return None
 
-    def bereken_box3_belasting(self, spaargeld, belegging, ontroerend, schuld, uw_deel, 
+    def bereken_box3_belasting(self, spaargeld, belegging, ontroerend, schuld, deel_box3, 
                                heeft_partner, year):
         """
         Calculate the Box 3 tax and return the results as a dictionary.
@@ -312,7 +313,8 @@ class VermogensBelastingCalculator:
         belastbaar_rendement_vermogen = (perc_spaargeld * spaargeld) + (perc_belegging * belegging) + (perc_belegging * ontroerend)
         belastbaar_rendement_totaal = (perc_spaargeld * spaargeld) + (perc_belegging * belegging) + (perc_belegging * ontroerend) - rendement_schulden
         grondslag = max(0, rendementsgrondslag - heffingsvrij_vermogen)
-        mijn_grondslag = grondslag * uw_deel
+        mijn_grondslag = grondslag * deel_box3
+
         perc_mijn_aandeel = mijn_grondslag / rendementsgrondslag
 
         rendementspercentage = belastbaar_rendement_vermogen / totaal_vermogen if totaal_vermogen > 0 else 0
@@ -348,7 +350,7 @@ class VermogensBelastingCalculator:
             "Heffingsvrij vermogen": heffingsvrij_vermogen,
             "Grondslag sparen en beleggen": grondslag,
             "Verdeling": {
-                "Uw deel": f"{uw_deel * 100:.0f}%",
+                "Uw deel": f"{deel_box3 * 100:.0f}%",
                 "Mijn grondslag sparen en beleggen": mijn_grondslag,
                 "Rendements grondslag uw aandeel": f"{perc_mijn_aandeel * 100:.1f}%"
             },
@@ -479,4 +481,43 @@ class OuderenKorting:
 
     def close(self):
         """function description"""
+        self.conn.close()
+class TariefAanpassingEigenWoning:
+    """Class Description: Berekent de tariefsaanpassing voor hogere inkomsten ivm aftrekbare schulden"""
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self.conn = sqlite3.connect(db_path)
+        self.cursor = self.conn.cursor()
+
+
+    def calculate_tarief_aanpassing(self, aftrek, inkomen, year):
+        """
+        Calculate the mortgage interest deduction adjustment based on income and year.
+        
+        Args:
+            aftrek (float): The mortgage interest deduction amount.
+            inkomen (float): The income of the taxpayer.
+            year (int): The year for which the calculation is performed.
+        
+        Returns:
+            float: The calculated adjustment.
+        """
+        self.cursor.execute("""
+            SELECT income_threshold, percentage
+            FROM tbl_tarief_aanpassing
+            WHERE year = ?
+        """, (year,))
+
+        result = self.cursor.fetchone()
+        if result:
+            income_threshold, percentage = result
+            if inkomen > income_threshold:
+                return aftrek * percentage
+            else:
+                return 0.0
+        else:
+            return 0.0
+
+    def close(self):
+        """Close the database connection."""
         self.conn.close()
