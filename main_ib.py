@@ -5,62 +5,39 @@
 """
 from functions_output import handle_output
 from functions_input import get_user_input, check_input
-from function_calculations import (calculate_box1, calculate_box3, calculate_premies, 
-                                   calculate_inkomen_werkenwoning, 
-)
+from function_calculations import (calculate_aanslag_for_person)
 
 def main():
-    """ Main program """
+    """# Main program """ 
+
     # Step 1: Get user input 
     input_data = get_user_input()
     input_data = check_input(input_data)
-
-    # Step 2: Perform calculations for the primary person
-    result1 = {}  # voor de belangrijkste tussen resulaten
-    results_1_box1a = calculate_inkomen_werkenwoning(input_data, input_data['primary'], result1)
-    # result1['inkomenwerkenwoning']  toegevoegd
-    results_1_box3 = calculate_box3(input_data, input_data['primary'],result1)
-    # result1['verzamelinkomen'] en tussenresultaat['InkomstenBelastinBox3']toegevoegd
-    results_1_premies = calculate_premies(input_data, input_data['primary'], result1)
-    # result1['totaalpremies'] toegevoegd
-    results_1_box1 = calculate_box1(input_data, input_data['primary'], result1)
+    all_results ={}
+    all_results ['input'] = input_data
+    all_results['totaal'] = {}
 
 
+    # Bereken eerste persoon
+    all_results['primary']= calculate_aanslag_for_person(input_data, input_data['primary'])
+    aanslag = all_results ['primary'] ['Nieuw_bedrag_aanslag']
+
+    # Bereken tweede persoon indien die er is.
     if input_data['primary']['heeft_partner']:
-        result2 = {}  # voor de belangrijkste tussen resulaten
-        results_2_box1a = calculate_inkomen_werkenwoning(input_data, input_data['partner'], result2)
-        # result2['inkomenwerkenwoning']  toegevoegd
-        results_2_box3 = calculate_box3(input_data, input_data['partner'],result2)
-        # result2['verzamelinkomen'] en tussenresultaat['InkomstenBelastinBox3'] toegevoegd
-        results_2_premies = calculate_premies(input_data, input_data['partner'], result2)
-        # result2['totaalpremies'] toegevoegd
-        results_2_box1 = calculate_box1(input_data, input_data['partner'], result2)
+        all_results['partner']= calculate_aanslag_for_person(input_data, input_data['partner'])
+        aanslag_totaal = aanslag + all_results ['partner'] ['Nieuw_bedrag_aanslag']
 
-    # Gather all results into one dictionary first for the primary person
-    all_results = {
-        'input': input_data,
-        'primary': {
-            'box1a': results_1_box1a,
-            'box1': results_1_box1,
-            'premies': results_1_premies,
-            'box3': results_1_box3,
-            }
-    }
 
-    # Add partner data if applicable
-    if input_data['primary']['heeft_partner']:
-        all_results['partner'] = {
-            'box1a': results_2_box1a,
-            'box1': results_2_box1,
-            'premies': results_2_premies,
-            'box3': results_2_box3,
-        }
-    else:
-        all_results['partner'] = None  # or {}
-
+    all_results['totaal']['aanslag'] = aanslag_totaal
 
     # Step 3: Handle output (formatting and exporting)
     handle_output(all_results)   #functions_output
+
+    if aanslag < 0:
+        print(f"U krijgt terug : €{-aanslag_totaal:,.0f}")
+    else:
+        print(f"U moet betalen : €{aanslag_totaal:,.0f}")
+
 
 if __name__ == "__main__":
     main()

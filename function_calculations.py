@@ -63,6 +63,7 @@ def calculate_box1(input_data, person, tussenresultaat):
     ingehouden_belasting = person['al_ingehouden'] + dividend_deel
 
     bedrag_aanslag = TotaalInkomstenBelastingInclBox3 - ingehouden_belasting
+    nieuw_bedrag_aanslag = bedrag_aanslag - person['voorlopige_aanslag']
 
     # Create the results_box1 dictionary
     results_box1 = {
@@ -80,7 +81,8 @@ def calculate_box1(input_data, person, tussenresultaat):
         "TotaalInkomstenbelastingInclBox3": TotaalInkomstenBelastingInclBox3,   # Totaal aan Box1 + Box3 belastingen 
         "Dividend uw deel": dividend_deel,                      # Uw deel dividend
         "ingehouden_belasting": ingehouden_belasting,            # Al ingehouden loonheffing + divident  
-        "Nieuw_bedrag_aanslag": bedrag_aanslag,     
+         "Bedrag_aanslag": bedrag_aanslag,                      # verschuldigd 
+        "Nieuw_bedrag_aanslag": nieuw_bedrag_aanslag,           # inclusief al betaald 
         "netto_inkomen": netto,                                 # Net income after taxes and credits
         }
     # Close the calculator
@@ -216,3 +218,36 @@ def calculate_verzamelinkomen(InkomenWerkWoning, VoordeelBox3):
     verzamelinkomen = InkomenWerkWoning + VoordeelBox3
 
     return verzamelinkomen
+
+def calculate_aanslag_for_person(input_data, person_data):
+    """
+    Calculate the aanslag and all intermediate results for a given person (primary or partner).
+    :param input_data: Dictionary containing all input data.
+    :param person_data: Dictionary containing data for the specific person (primary or partner).
+    :return: A dictionary containing the calculated aanslag, intermediate results, and detailed calculation results.
+    """
+    # Initialize a dictionary to store intermediate results
+    result = {}
+
+    # Perform calculations for the person
+    results_box1a = calculate_inkomen_werkenwoning(input_data, person_data, result)
+    results_box3 = calculate_box3(input_data, person_data, result)
+    results_premies = calculate_premies(input_data, person_data, result)
+    results_box1 = calculate_box1(input_data, person_data, result)
+
+    # Extract the aanslag from the results
+    aanslag = results_box1['Nieuw_bedrag_aanslag']
+
+    all_results = {
+        'input': input_data,
+        'box1a': results_box1a,
+        'box1': results_box1,
+        'premies': results_premies,
+        'box3': results_box3,
+        "Nieuw_bedrag_aanslag": aanslag
+    }
+    return all_results
+
+
+
+

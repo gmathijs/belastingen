@@ -5,39 +5,41 @@ def get_user_input():
     input_data = {
         "db_path": "mijn_belastingen.db",   # Path to the database
         "year": 2024,                       # Tax year
-        "AftrekEW": 1985,                   # Aftrek eigen woning
+        "AftrekEW": 1500,                   # Aftrek eigen woning
 
-        "spaargeld": 120861,                # Savings
-        "belegging": 55901,                 # Investments
-        "ontroerend": 45000,                # Real estate
-        "WOZ_Waarde": 348000,               # WOZ value of real estate
+        "spaargeld": 30000,                # Savings
+        "belegging": 10000,                 # Investments
+        "ontroerend": 0,                # Real estate
+        "WOZ_Waarde": 450000,               # WOZ value of real estate
         "schuld": 0,                        # Aftrekbare schulden Box 3
-        "divident": 465,                    # Ingehouden divident belasting
+        "divident": 30,                    # Ingehouden divident belasting
 
 
         "primary": {
-            "naam": "Jan Doedel",           # Identificatie voor de eerste persoon
+            "naam": "persoon 1",           # Identificatie voor de eerste persoon
             "aow_er": 0,                    # AOW status (0 = geen AOW, 1 = AOW na 1946, 2 = AOW voor 1946)
             "heeft_partner": True,          # Whether you have a fiscal partner
             "Inkomen": 0,                   # Inkomen uit artbeid
-            "Pensioen": 66853,              # Pensioen of uitkering
+            "Pensioen": 50000,              # Pensioen of uitkering
             "deel_box1": 1,                 # Deel box1 wat persoon voor zijn rekening neemt
-            "deel_box3": 0.5360,            # Deel box3 wat persoon voor zijn rekening neemt
+            "deel_box3": 0,                 # Deel box3 wat persoon voor zijn rekening neemt
             "deel_div": 0,                  # Deel dividentbelasting wat persoon voor zijn rekening neemt 
-            "al_ingehouden": 24714,         # Ingehouden loonheffing optelsom van jaaropgaven 
-            "voorlopige_aanslag": 1051      # Betaalde voorlopige aanslag 
+            "al_ingehouden": 18000,         # Ingehouden loonheffing optelsom van jaaropgaven 
+            "voorlopige_aanslag": 1000      # Betaalde voorlopige aanslag (+) = betaald (-) is teruggekregem 
 
         },
         "partner": {
-            "naam": "Mien Doedel",          # Identificatie voor de partner
+            "naam": "Persoon 2",          # Identificatie voor de partner
             "aow_er": 1,                    # AOW status (0 = geen AOW, 1 = AOW na 1946, 2 = AOW voor 1946)
             "heeft_partner": True,          # Whether you have a fiscal partner
-            "Inkomen": 14306,               # Inkomen uit artbeid
-            "Pensioen": 20610,              # Pensioen of uitkering
-            "al_ingehouden": 4100,          # Ingehouden loonheffing optelsom van jaaropgaven 
+            "Inkomen": 10000,               # Inkomen uit artbeid
+            "Pensioen": 15000,              # Pensioen of uitkering
+            "al_ingehouden": 3000,          # Ingehouden loonheffing optelsom van jaaropgaven 
             "voorlopige_aanslag": 0         # Betaalde voorlopige aanslag          
+        },
+        "programsetting": {
+            "mode": 1                       # 1: Normal 2: Vind optimale verdeling (nog niet actief)
         }
-
     }
     return input_data
 
