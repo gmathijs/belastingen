@@ -17,7 +17,7 @@ Voor een optimale verdelings berekening gebruik je het programma main_verdeling.
 deel_box1  voor aftrek schulden eigen woning
 deel_box3  voor het deel dat je voor rekeneing neemt in box3
 deel_div  voor het deel dat je eventuele dividend belasting voor je rekening neemt.
-Het geheel wordt met stapjes van 0.5 van 0-1.0 doorgerekent dus 21^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
+Het geheel wordt met stapjes van 0.05 van 0-1.0 doorgerekent dus 21^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
 Aangezien het ±9300 berekeningen zijn duurt het ff (bij mij 30 s)
 
 Als je geen partner hebt worden alle parameters op 1 gezet. En dien je alleen main_ib.py te gebruiken.
