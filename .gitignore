@@ -1,4 +1,5 @@
-taxes.txt
+*.txt
+*.csv
 /oudspul/
 /test/
 /private/
