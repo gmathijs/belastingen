@@ -1,0 +1,28 @@
+key,value
+db_path,mijn_belastingen.db
+year,2024
+AftrekEW,1500
+spaargeld,30000
+belegging,10000
+ontroerend,0
+WOZ_Waarde,450000
+schuld,0
+divident,30
+primary.naam,persoon 1
+primary.aow_er,0
+primary.heeft_partner,True
+primary.Inkomen,0
+primary.Pensioen,50000
+primary.deel_box1,1
+primary.deel_box3,0
+primary.deel_div,0
+primary.al_ingehouden,18000
+primary.voorlopige_aanslag,1000
+partner.naam,Persoon 2
+partner.aow_er,1
+partner.heeft_partner,True
+partner.Inkomen,10000
+partner.Pensioen,15000
+partner.al_ingehouden,3000
+partner.voorlopige_aanslag,0
+programsetting.mode,2
