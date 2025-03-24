@@ -38,7 +38,7 @@ def get_user_input():
             "voorlopige_aanslag": 0         # Betaalde voorlopige aanslag          
         },
         "programsetting": {
-            "mode": 1                       # 1: Normal 2: Vind optimale verdeling (nog niet actief)
+            "mode": 2                       # 1: Normal 2: Vindt optimale verdeling
         }
     }
     return input_data
