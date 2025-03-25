@@ -6,14 +6,14 @@ Maar VBA onderhouden is een uitdaging op zich, bovendien stonden alle getalletje
 Nu met chatgpt en deepseek ben ik eens in Python gedoken.
 Met deze code als resultaat.
 De belangrijkste dingen staan nu in classes 
-1: class LoonbelastingCalculator  
-2: class VermogensBelastingCalculator
-3: class HeffingskortingCalculator
-4: class ArbeidskortingCalculator
-5: class PremiesVolksverzekeringen
-6: class EigenWoningForfaitCalculator
-7: class OuderenKorting
-8: class TariefAanpassingEigenWoning
+1. class LoonbelastingCalculator  
+2. class VermogensBelastingCalculator
+3. class HeffingskortingCalculator
+4. class ArbeidskortingCalculator
+5. class PremiesVolksverzekeringen
+6. class EigenWoningForfaitCalculator
+7. class OuderenKorting
+8. class TariefAanpassingEigenWoning
 
 Alle getalletjes staan in eenSQLite dabase mijn_belastingen.db die je eenvoudig kunt aanmaken met create_tax_database.py. getallen staan erin vanaf 2020 t/m 2024. De getallen staan in diverse tabellen nl:
 - tax_loonheffing
