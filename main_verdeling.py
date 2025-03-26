@@ -80,17 +80,29 @@ def main():
     if input_data['primary']['heeft_partner'] and input_data['programsetting']['mode'] ==2: 
         besteverdeling = True
 
-        for deel_box1 in [i * 0.05 for i in range(21)]:
+        for step in [0.1, 0.05, 0.01]:
+                num_steps = int(1 / step) + 1
+                print(f"\nStep size: {step} ({num_steps} steps)")
+                for val in [i * step for i in range(num_steps)]:
+                    print(round(val, 2), end=" ")
+
+        step = 0.1      # Make sure to check if the step size is divisible by 1
+                        # steps smaller then 0.05 must be avoide due to calculation time
+        assert (1 % step) == 0, f"Step {step} must divide 1 without remainder!"
+
+        num_steps = int(1 / step) + 1
+
+        for deel_box1 in [i * step for i in range(num_steps)]:
             input_data['primary']['deel_box1'] = deel_box1
             input_data['partner']['deel_box1'] = 1-deel_box1
 
             # Loop over deel_box3 from 0 to 1 in steps of 0.1
-            for deel_box3 in [i * 0.05 for i in range(21)]:
+            for deel_box3 in [i * step for i in range(num_steps)]:
                 input_data['primary']['deel_box3'] = deel_box3
                 input_data['partner']['deel_box3'] = 1-deel_box3
 
                 # Loop over deel_div from 0 to 1 in steps of 0.1
-                for deel_div in [i * 0.05 for i in range(21)]:
+                for deel_div in [i * step for i in range(num_steps)]:
                     input_data['primary']['deel_div'] = deel_div
                     input_data['partner']['deel_div'] = 1-deel_div
 
@@ -131,7 +143,7 @@ def main():
 
         csv_file = 'resultaat.csv'
 
-        # Open the CSV file for writing
+        # Open the CSV file for writing the intermediate results
         with open(csv_file, mode='w', newline='') as file:
             # Extract the fieldnames (column headers) from the first dictionary
             fieldnames = resultaat_lijst[0].keys()
