@@ -10,6 +10,7 @@ The following classes are incorporated
 6: class EigenWoningForfaitCalculator:
 7: class OuderenKorting:
 8: class TariefAanpassingEigenWoning:
+
 """
 import sqlite3
 import math

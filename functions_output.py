@@ -9,11 +9,19 @@ def handle_output(all_results):
     """
     Format and export the Box 3 tax calculation results.
     """
+     
     # Define the file name
-    filename = "taxes.txt"
-    # Check if the file exists before deleting
-    if os.path.exists(filename):
-        os.remove(filename)
+
+
+    base_name = all_results['input']['opslagnaam']
+    filename = f"{base_name}.txt"
+    counter = 1
+
+    # Check if file exists and find the next available number
+    while os.path.exists(filename):
+        filename = f"{base_name}_{counter}.txt"
+        counter += 1
+
 
 
     # Extract individual results from the dictionary for the primary 
@@ -67,14 +75,14 @@ def format_table_all(data_in,data_out):
         ["-  Uw deel box1 ", f"{data_in['deel_box1']*100:,.0f}%"],  
         ["-  Uw deel box3 ", f"{data_in['deel_box3']*100:,.0f}%"],  
         ["Ingehouden dividend belasting", f"€{data_in['divident']:,.0f}"],
-        ["-  Uw deel box1 ", f"{data_in['deel_div']*100:,.0f}%"],   
+        ["-  Uw deel dividend ", f"{data_in['deel_div']*100:,.0f}%"],   
         ["Voorlopige aanslag al betaald", f"€{data_in['voorlopige_aanslag']:,.0f}"],                                    
         ["-" * 40, "-" * 25],  # Separator line
 
         [" ", " "],  # empty line
         ["Overzicht Werk en Woning", " "],
         ["Inkomen uit arbeid", f"€{data_out['box1']['Inkomen uit arbeid']:,.0f}"],
-        ["Pensioen of uitkering", f"€{data_out['box1']['Pensioen of uitkering']:,.0f}"],
+        ["Pensioen of uitkering", f"€{data_out['box1']['Pensioen of uitkering']:,.0f}"],   
         ["Aftrekbare rente Eigen Woning", f"€{data_out['box1a']['AftrekbareUitgavenEigenwoning']:,.0f}"],
         ["Totaal inkomsten Eigen Woning", f"€{data_out['box1a']['TotaalEigenWoning']:,.0f}"],
         ["Uw Deel", f"€{data_out['box1a']['UwDeel']:,.0f}"],
@@ -89,22 +97,18 @@ def format_table_all(data_in,data_out):
         ["Inkomsten Belasting Box3", f"€{data_out['box3']['BOX 3 BELASTING']:,.0f}"], 
         ["Totaal Inkomsten Belasting", f"€{data_out['box1']['TotaalInkomstenbelasting']:,.0f}"],  
         [" ", " "],  # empty line                
-        ["Premies Totaal ", f"€{data_out['premies']['totale_premie']:,.0f}"],
-        ["Box1 + Box3 (inc. premies)", f"€{data_out['box1']['TotaalInkomstenbelastingInclBox3']:,.0f}"],
-        ["Ingehouden dividend uw deel", f"€{data_out['box1']['Dividend uw deel']:,.0f}"], 
-        ["Ingehouden loonheffing incl dividend", f"€{data_out['box1']['ingehouden_belasting']:,.0f}"],        
-        ["Nieuw bedrag aanslag", f"€{data_out['box1']['Nieuw_bedrag_aanslag']:,.0f}"],   
-        [" ", " "],  # empty line
+        ["Premies Volksverz. Totaal ", f"€{data_out['premies']['totale_premie']:,.0f}"],
         ["Heffingskorting", f"€{data_out['box1']['heffingskorting']:,.0f}"],
         ["Arbeidskorting", f"€{data_out['box1']['arbeidskorting']:,.0f}"],  
         ["Ouderenkorting", f"€{data_out['box1']['ouderenkorting']:,.0f}"],
         [" ", " "],  # empty line
-
-        [" ", " "],  # empty line  
+        ["Box1 + Box3 (inc. premies en kortingen)", f"€{data_out['box1']['TotaalInkomstenbelastingInclBox3']:,.0f}"],
+        ["Ingehouden dividend uw deel", f"€{data_out['box1']['Dividend uw deel']:,.0f}"], 
+        ["Ingehouden loonheffing incl dividend", f"€{data_out['box1']['ingehouden_belasting']:,.0f}"],        
+        ["Nieuw bedrag aanslag", f"€{data_out['box1']['Nieuw_bedrag_aanslag']:,.0f}"],   
+        [" ", " "],  # empty line
         ["-" * 40, "-" * 25],  # Separator line
         [" ", " "],  # empty line
-
-
         ["Box3 Vermogen Detail (nieuwe methode)", "+"*25],
         ["Overzicht Input Box3", " "],
         ["Spaargeld", f"€{data_in['spaargeld']:,.0f}"],
@@ -131,11 +135,18 @@ def format_table_all(data_in,data_out):
 
 def format_table_totaal(data_out):
     """Format the totalen """
-    table_data = [
-         ["Uw aanslag (-) ontvangt (+) betalen", f"€{data_out['totaal']['aanslag']:,.0f}"],
-        ["-" * 40, "-" * 25],  # Separator line
-    ]
-    
+    if data_out['totaal']['aanslag'] > 0:
+        table_data = [
+            ["Uw aanslag (+) betalen", f"€{data_out['totaal']['aanslag']:,.0f}"],
+            ["-" * 40, "-" * 25],  # Separator line
+        ]
+    else:
+        table_data = [     
+            ["Uw aanslag (-) ontvangt", f"€{data_out['totaal']['aanslag']:,.0f}"],
+            ["-" * 40, "-" * 25]  # Separator line
+        ]
+
+
     table = tabulate(table_data, headers=["Samenvatting Inkomstenbelasting", "Bedrag"], tablefmt="pretty", colalign=("left", "right"))
     return table
 

@@ -71,7 +71,7 @@ def calculate_box1(input_data, person, tussenresultaat):
         "Pensioen of uitkering": person["Pensioen"] ,           # Total gross income
         "Verzamelinkomen": verzamelinkomen,                     # Verzamelinkomen
         "loonheffing_excl": loonheffing_excl,                   # Wage tax excl. premies 
-        "loonheffing": loonheffing,                        # Wage tax excl. premies       
+        "loonheffing": loonheffing,                             # Wage tax excl. premies       
         "arbeidskorting": arbeidskorting,                       # Employment tax credit
         "heffingskorting": heffingskorting,                     # General tax credit
         "ouderenkorting": ouderenkorting,                       # Ouderen korting
@@ -81,7 +81,7 @@ def calculate_box1(input_data, person, tussenresultaat):
         "TotaalInkomstenbelastingInclBox3": TotaalInkomstenBelastingInclBox3,   # Totaal aan Box1 + Box3 belastingen 
         "Dividend uw deel": dividend_deel,                      # Uw deel dividend
         "ingehouden_belasting": ingehouden_belasting,            # Al ingehouden loonheffing + divident  
-         "Bedrag_aanslag": bedrag_aanslag,                      # verschuldigd 
+        "Bedrag_aanslag": bedrag_aanslag,                      # verschuldigd 
         "Nieuw_bedrag_aanslag": nieuw_bedrag_aanslag,           # inclusief al betaald 
         "netto_inkomen": netto,                                 # Net income after taxes and credits
         }

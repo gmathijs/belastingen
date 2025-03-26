@@ -4,19 +4,67 @@
     GMa Last update 2025-03
 """
 import csv
+import os
+import tkinter as tk
+from tkinter import filedialog
 from functions_output import handle_output
 from functions_input import get_user_input, check_input
 from function_calculations import (calculate_aanslag_for_person)
+from save_input import write_input_to_csv, read_input_from_csv, validate_tax_csv
 
 
 def main():
-    """# Main program """ 
-    # Initialize variables to store the minimum aanslag and corresponding values
+    """main program"""
+    # Initialize Tkinter (hidden root window)
+    root = tk.Tk()
+    root.withdraw()
+
+    # Get directory where main program is located
+    initial_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Ask user to pick a CSV file
+    file_path = filedialog.askopenfilename(
+        title="Select a input CSV file (or Cancel for manual input)",
+        filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
+        initialdir=initial_dir  # Set to program's directory
+    )
+
+    if file_path:  # User selected a file
+        print(f"Using selected file: {file_path}")
+
+        try:
+            tax_data = validate_tax_csv(file_path)
+            print("Using validated tax data from:", file_path)
+            # Continue processing with tax_data
+        except ValueError as e:
+            print(f"Invalid tax file: {e}, please retry and chooose a valid input file")
+            # Handle error (ask to select another file or use manual input)
+            return
+
+        input_data = read_input_from_csv(file_path)
 
 
-    # Step 1: Get user input 
-    input_data = get_user_input()
-    input_data = check_input(input_data)
+    else:  # User cancelled - proceed with manual input
+        print("No file selected - using manual input")
+        # Initialize variables to store the minimum aanslag and corresponding values
+        # Step 1: Get user input 
+        input_data = get_user_input()
+        input_data = check_input(input_data)
+
+        # Write the input data to a csv file 
+        base_name = input_data['opslagnaam']
+        filename = f"input_{base_name}.csv"
+        counter = 1
+
+        # Check if file exists and find the next available number
+        while os.path.exists(filename):
+            filename = f"input_{base_name}_{counter}.csv"  # Fixed to use consistent naming
+            counter += 1
+
+        write_input_to_csv(input_data, filename)
+        print(f"Input data saved to: {filename}")
+
+
     all_results ={}
     all_results ['input'] = input_data
     all_results['totaal'] = {}
@@ -80,6 +128,7 @@ def main():
 
         print(f"Eind resultaat min aanslag :  €{min_aanslag:,.0f}  voor box1 {best_deel_box1} voor box3 {best_deel_box3}  voor div {best_deel_div}    ")
         # Define the CSV file name
+
         csv_file = 'resultaat.csv'
 
         # Open the CSV file for writing
@@ -119,7 +168,7 @@ def main():
 
     all_results['totaal']['aanslag'] = aanslag
 
-    # Step 3: Handle output (formatting and exporting)
+    # Step 3: Handle output (formatting and exporting to .txt file)
     handle_output(all_results)   #functions_output
 
     if besteverdeling:

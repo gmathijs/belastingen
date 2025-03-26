@@ -3,29 +3,30 @@ def get_user_input():
     Collect user input for Box 3 tax calculation.
     """
     input_data = {
+        "opslagnaam": "belasting",
         "db_path": "mijn_belastingen.db",   # Path to the database
         "year": 2024,                       # Tax year
-        "AftrekEW": 1500,                   # Aftrek eigen woning
+        "AftrekEW": 0,                   # Aftrek eigen woning
 
-        "spaargeld": 30000,                # Savings
-        "belegging": 10000,                 # Investments
-        "ontroerend": 0,                # Real estate
-        "WOZ_Waarde": 450000,               # WOZ value of real estate
+        "spaargeld": 100,                   # Savings
+        "belegging": 0,                     # Investments
+        "ontroerend": 0,                    # Real estate
+        "WOZ_Waarde": 0,                     # WOZ value of real estate
         "schuld": 0,                        # Aftrekbare schulden Box 3
-        "divident": 30,                    # Ingehouden divident belasting
+        "divident": 0,                      # Ingehouden divident belasting
 
 
         "primary": {
-            "naam": "persoon 1",           # Identificatie voor de eerste persoon
+            "naam": "M F LEEMHUIS-WILMINK",           # Identificatie voor de eerste persoon
             "aow_er": 0,                    # AOW status (0 = geen AOW, 1 = AOW na 1946, 2 = AOW voor 1946)
-            "heeft_partner": True,          # Whether you have a fiscal partner
+            "heeft_partner": False,          # Whether you have a fiscal partner
             "Inkomen": 0,                   # Inkomen uit artbeid
-            "Pensioen": 50000,              # Pensioen of uitkering
+            "Pensioen": 4499,              # Pensioen of uitkering
             "deel_box1": 1,                 # Deel box1 wat persoon voor zijn rekening neemt
-            "deel_box3": 0,                 # Deel box3 wat persoon voor zijn rekening neemt
-            "deel_div": 0,                  # Deel dividentbelasting wat persoon voor zijn rekening neemt 
-            "al_ingehouden": 18000,         # Ingehouden loonheffing optelsom van jaaropgaven 
-            "voorlopige_aanslag": 1000      # Betaalde voorlopige aanslag (+) = betaald (-) is teruggekregem 
+            "deel_box3": 1,                 # Deel box3 wat persoon voor zijn rekening neemt
+            "deel_div": 1,                  # Deel dividentbelasting wat persoon voor zijn rekening neemt 
+            "al_ingehouden": 0,             # Ingehouden loonheffing optelsom van jaaropgaven 
+            "voorlopige_aanslag": 0      # Betaalde voorlopige aanslag (+) = betaald (-) is teruggekregem 
 
         },
         "partner": {
