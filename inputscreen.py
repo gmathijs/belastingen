@@ -1,8 +1,14 @@
 """ Start of the belasting calculation GUI"""
 # pylint: disable=no-member
 # pylint: disable=unsubscriptable-object
+# pylint: disable=broad-exception-caught
+# pylint: disable=redefined-outer-name
+# pylint: disable=trailing-whitespace
+# pylint: disable=line-too-long
+
 # Standard library
 import os
+import threading
 
 # tkinter 
 import tkinter as tk
@@ -21,6 +27,7 @@ from save_input import (read_input_from_csv,
 # Start of the standard class 
 
 class TaxInputApp:
+    """ Clas belastingen Nederland"""
     def __init__(self, root):
         # Initialize all widgets as None first
         self.primary_aow = None
@@ -28,6 +35,8 @@ class TaxInputApp:
         # Add all other dynamically created widgets here
         self.primary_naam = None
         self.partner_naam = None
+
+        self.filename = "belasting"
 
         self.root = root
         self.root.title("Inkomsten Belasting  Input")
@@ -175,13 +184,15 @@ class TaxInputApp:
             self.calculating = True
             self.submit_button.config(state=tk.DISABLED)
             self.progress_label.config(text="Calculating...")
+
+            self.delete_output(self.filename)
             
             # Get the input data
             try:
                 input_data = self.submit_data()  # This collects data but doesn't close window
                 if input_data:
                     # Start calculation in a separate thread
-                    import threading
+
                     threading.Thread(
                         target=self.run_calculation,
                         args=(input_data,),
@@ -213,7 +224,7 @@ class TaxInputApp:
         self.handle_output(result)
         
         # Optional: show summary in messagebox
-        total = result['totaal']['aanslag']
+        # total = result['totaal']['aanslag']
 
         #messagebox.showinfo(
         #   "Calculation Complete",
@@ -226,6 +237,19 @@ class TaxInputApp:
         self.submit_button.config(state=tk.NORMAL)
         self.progress_label.config(text="Calculation failed")
         messagebox.showerror("Error", f"Calculation failed:\n{error}")
+
+    def delete_output(self, filename):
+        """ If filename is the default name then clean up the existing .txt files"""
+        # Check if file exists and find the next available number
+        if filename == self.filename:
+            counter = 1
+            basename = filename 
+            filename = basename+".txt"
+            while os.path.exists(filename):
+                os.remove(filename)
+                filename = f"{basename}_{counter}.txt"
+                counter += 1
+
         
     def create_general_tab(self):
         """General information tab"""
@@ -233,11 +257,12 @@ class TaxInputApp:
         self.db_path = ttk.Entry(self.general_frame)
         self.db_path.grid(row=0, column=1, padx=5, pady=5)
         self.db_path.insert(0, "mijn_belastingen.db")
+        ToolTip(self.db_path, "Pathname to the database)")
 
         ttk.Label(self.general_frame, text="Opslagnaam:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
         self.opslagnaam = ttk.Entry(self.general_frame)
         self.opslagnaam.grid(row=1, column=1, padx=5, pady=5)
-        self.opslagnaam.insert(0, "belasting")
+        self.opslagnaam.insert(0, self.filename)
             
         ttk.Label(self.general_frame, text="Belasting Jaar:").grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
         self.year = ttk.Combobox(self.general_frame, values=["2024", "2023", "2022","2021","2020"])
@@ -517,6 +542,41 @@ class TaxInputApp:
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
+class ToolTip:
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tip_window = None
+        self.widget.bind("<Enter>", self.show_tip)
+        self.widget.bind("<Leave>", self.hide_tip)
+
+    def show_tip(self, event=None):
+        """Display tooltip on hover"""
+        if self.tip_window or not self.text:
+            return
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 25
+        
+        self.tip_window = tk.Toplevel(self.widget)
+        self.tip_window.wm_overrideredirect(True)
+        self.tip_window.wm_geometry(f"+{x}+{y}")
+        
+        label = ttk.Label(
+            self.tip_window,
+            text=self.text,
+            background="#ffffe0",
+            relief="solid",
+            borderwidth=1,
+            padding=(4, 2)
+        )
+        label.pack()
+
+    def hide_tip(self, event=None):
+        """Destroy tooltip"""
+        if self.tip_window:
+            self.tip_window.destroy()
+        self.tip_window = None
 
 
 

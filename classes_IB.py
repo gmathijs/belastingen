@@ -12,6 +12,7 @@ The following classes are incorporated
 8: class TariefAanpassingEigenWoning:
 
 """
+from tkinter import  messagebox
 import sqlite3
 import math
 
@@ -316,10 +317,14 @@ class VermogensBelastingCalculator:
         grondslag = max(0, rendementsgrondslag - heffingsvrij_vermogen)
         mijn_grondslag = grondslag * deel_box3
 
-        perc_mijn_aandeel = mijn_grondslag / rendementsgrondslag
-
-        rendementspercentage = belastbaar_rendement_vermogen / totaal_vermogen if totaal_vermogen > 0 else 0
-        voordeel_sparen_en_beleggen = belastbaar_rendement_vermogen * mijn_grondslag / totaal_vermogen if totaal_vermogen > 0 else 0
+        if totaal_vermogen == 0:
+            perc_mijn_aandeel = 0
+            rendementspercentage = 0
+            voordeel_sparen_en_beleggen =0            
+        else:
+            perc_mijn_aandeel = mijn_grondslag / rendementsgrondslag
+            rendementspercentage = belastbaar_rendement_vermogen / totaal_vermogen if totaal_vermogen > 0 else 0
+            voordeel_sparen_en_beleggen = belastbaar_rendement_vermogen * mijn_grondslag / totaal_vermogen if totaal_vermogen > 0 else 0
 
         box3_belasting = perc_box3 * voordeel_sparen_en_beleggen
 
@@ -480,9 +485,15 @@ class OuderenKorting:
         }
 
 
+
     def close(self):
         """function description"""
         self.conn.close()
+
+
+
+
+
 class TariefAanpassingEigenWoning:
     """Class Description: Berekent de tariefsaanpassing voor hogere inkomsten ivm aftrekbare schulden"""
     def __init__(self, db_path):
