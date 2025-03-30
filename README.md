@@ -26,17 +26,22 @@ Alle getalletjes staan in eenSQLite dabase mijn_belastingen.db die je eenvoudig 
 - tbl_ouderenkorting
 - tbl_tarief_aanpassing
 
-Geen AOW en AOW zitte erin verwerkt. Krijg je midden in het jaar AOW; die berekening zit er niet in.
+AOW zit erin zowel voor en na 1946. Krijg je midden in het jaar AOW; die berekening zit er (nog) niet in.
 
 Box2 zit er (nog) niet bij 
 
 # Hoe gebruik je het:
-Je gegevens invullen in de functions_input.py file zet mode op 2 voor een beste verdelings calculation of 1 om gewoon de gegevens na te rekenen.
+Start het programma op met inputscreen.py. Er opent zich een GUI screen aan de linkerkant van het scherm.
+Dit scherm bevat 3 tabs General, Primary en Partner.
+Vul de benodigde invoer in en druk op calculate
 
 Parameters om de verdeling te berekenen worden aan de eerste persoon gehangen. De tweede persoon wordt uitgerekend
 deel_box1  voor aftrek schulden eigen woning
-deel_box3  voor het deel dat je voor rekeneing neemt in box3
+deel_box3  voor het deel dat je voor rekening neemt in box3
 deel_div  voor het deel dat je eventuele dividend belasting voor je rekening neemt.
+
+Als bij general program settings normal invoert rekent het programma met de opgegeven verdeling. Wanneer je kiest voor beste verdeling. Gaat het programma
+de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div
 Het geheel wordt met stapjes van 0.5 van 0-1.0 doorgerekent dus 21^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
 Aangezien het ±9300 berekeningen zijn duurt het ff (bij mij 30 s). Ga niet kleiner dan 0.5 want dan ben je wel ff onderweg.
 
@@ -50,8 +55,8 @@ En hoewel ik met git werk heb ik er eigenlijk geen compleet beeld van wat allema
 Ben met pensioen heb tijd zat maar het moet wel leuk blijven.  
 Niettemin wil ik graag bijleren van de jongere talenten
 
-Ik ga vast nog de input (tkinter) en output verbeteren, tevens kan de verdelings berekening wel wat efficienter.
-Eveneens is  de controle op input gegegevens ver ondermaats, zeg maar die is er niet.
+
+Dee controle op input gegegevens is nu nog ver ondermaats, zeg maar die is er niet.
 Maar ja je moet iets te wensen overhouden.
 
 Ieder opbouwend commentaar is uiteraard welkom. 
