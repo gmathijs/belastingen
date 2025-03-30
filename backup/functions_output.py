@@ -1,22 +1,69 @@
 """Output Modules """
+import os
 import csv
 import json
-import datetime
 from tabulate import tabulate 
+
+
+def handle_output(all_results):
+    """
+    Format and export the Box 3 tax calculation results.
+    """
+     
+    # Define the file name
+
+
+    base_name = all_results['input']['opslagnaam']
+    filename = f"{base_name}.txt"
+    counter = 1
+
+    # Check if file exists and find the next available number
+    while os.path.exists(filename):
+        filename = f"{base_name}_{counter}.txt"
+        counter += 1
+
+
+
+    # Extract individual results from the dictionary for the primary 
+    input_data = merge_data(all_results['input'],all_results['input']['primary'])
+
+    # Make up the output table 
+    table_all_primary = format_table_all(input_data,all_results['primary'])
+    print(table_all_primary)
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write("Primary Person Results:\n")
+        file.write(table_all_primary + "\n") 
+
+    # Extract individual results from the dictionary if partner exists 
+    if input_data['heeft_partner']:
+        input_data = merge_data(all_results['input'],all_results['input']['partner'])
+
+        table_all_partner = format_table_all(input_data,all_results['partner'])
+        print(table_all_partner)
+        with open(filename, "a", encoding="utf-8") as file:
+            file.write("\nPartner Results:\n")
+            file.write(table_all_partner + "\n")
+
+
+    table_totaal = format_table_totaal(all_results)
+    print(table_totaal)
+    with open(filename, "a", encoding="utf-8") as file:
+        file.write(table_totaal + "\n")
+    
+
+    # Open the text file automatically (Mac-specific)
+    os.system(f"open {filename}")  # This works on macOS
+
+    # END GENERIC OUTPUT
+
+
 
 def format_table_all(data_in,data_out):
     """
     Format the Box 1 results as a table.
     """
-    # using now() to get current time
-    current_time = datetime.datetime.now() - datetime.timedelta(hours=1)
-
-    # Printing value of now.
-    #print(f"{current_time:%d/%m/%Y %H:%M}")
 
     table_data = [
-        ["Berekening:  ",f"{current_time:%d/%m/%Y %H:%M}"],  
-        ["-" * 40, "-" * 25],  # Separator line              
         ["Overzicht Opgaven voor berekening van ",data_in['naam']],
         ["Inkomen uit Arbeid", f"€{data_in['Inkomen']:,.0f}"],
         ["Pensioen of uitkering", f"€{data_in['Pensioen']:,.0f}"],
@@ -279,5 +326,3 @@ def combine_tables_side_by_side(table_primary, table_partner):
         combined_row = f"{row_primary}    |    {row_partner}"
         combined_table.append(combined_row)
     return combined_table
-
-

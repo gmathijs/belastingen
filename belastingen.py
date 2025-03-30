@@ -1,20 +1,20 @@
 """ 
     Main module to calculate the income tax
     Updated for year 2020 towards 2024
-    GMa Last update 2025-03
+    Gaston: Last update 2025-03
 """
 import csv
 import os
 import tkinter as tk
 from tkinter import filedialog
-from functions_output import handle_output
+#from functions_output import handle_output
 from functions_input import get_user_input, check_input
 from function_calculations import (calculate_aanslag_for_person)
 from save_input import write_input_to_csv, read_input_from_csv, validate_tax_csv
 
+def ask_input():
+    """ Routine to ask if user wants to read an input file """
 
-def main():
-    """main program"""
     # Initialize Tkinter (hidden root window)
     root = tk.Tk()
     root.withdraw()
@@ -39,7 +39,7 @@ def main():
         except ValueError as e:
             print(f"Invalid tax file: {e}, please retry and chooose a valid input file")
             # Handle error (ask to select another file or use manual input)
-            return
+
 
         input_data = read_input_from_csv(file_path)
 
@@ -56,7 +56,7 @@ def main():
         filename = f"input_{base_name}.csv"
         counter = 1
 
-        # Delete all inpu_csv files with the same base name
+        # Delete all input_csv files with the same base name
         while os.path.exists(filename):
             # wis file 
             os.remove(filename)
@@ -76,6 +76,31 @@ def main():
         write_input_to_csv(input_data, filename)
         print(f"Input data saved to: {filename}")
 
+    return input_data
+
+
+
+def belastingen(input_data):
+    """Belastingen is the main Module 
+    This functions just 
+    1. Takes input data  (input_data)
+    2. Perform calculations
+    3. Return results  (all_results)
+    Routine to ask if user wants to read an input file """
+    # Validate input structure
+    if not isinstance(input_data, dict):
+        raise ValueError("Input data must be a dictionary")
+    
+    # Ensure required keys exist
+    required_keys = ['primary', 'programsetting']
+    for key in required_keys:
+        if key not in input_data:
+            raise ValueError(f"Missing required key in input data: {key}")
+    
+    # If partner exists but no partner data, initialize empty
+    if input_data['primary'].get('heeft_partner') and 'partner' not in input_data:
+        input_data['partner'] = {}
+    #input_data = ask_input()
 
     all_results ={}
     all_results ['input'] = input_data
@@ -149,27 +174,24 @@ def main():
                         best_deel_box3 = deel_box3
                         best_deel_div = deel_div
 
-
+        # On screen output for debugging
         print(f"Eind resultaat min aanslag :  €{min_aanslag:,.0f}  voor box1 {best_deel_box1} voor box3 {best_deel_box3}  voor div {best_deel_div}    ")
         # Define the CSV file name
 
-        csv_file = 'resultaat.csv'
 
+        # Intermediate output to a csv file for debugging
+        csv_file = 'resultaat.csv'
         # Open the CSV file for writing the intermediate results
         with open(csv_file, mode='w', newline='') as file:
             # Extract the fieldnames (column headers) from the first dictionary
             fieldnames = resultaat_lijst[0].keys()
-
             # Create a DictWriter object
             writer = csv.DictWriter(file, fieldnames=fieldnames)
-
             # Write the header row
             writer.writeheader()
-
             # Write the data rows
             for result in resultaat_lijst:
                 writer.writerow(result)
-
         print(f"Results have been written to {csv_file}")
 
         # Zet de meest gunstige combinatie klaar 
@@ -181,6 +203,7 @@ def main():
         input_data['partner']['deel_div'] = 1-best_deel_box3
         # Einde loop beste verdeling 
 
+    # Calculate once for normal and for the optimal results
     # Bereken eerste persoon
     all_results['primary']= calculate_aanslag_for_person(input_data, input_data['primary'])
     aanslag = all_results ['primary'] ['Nieuw_bedrag_aanslag']
@@ -192,15 +215,15 @@ def main():
 
     all_results['totaal']['aanslag'] = aanslag
 
-    # Step 3: Handle output (formatting and exporting to .txt file)
-    handle_output(all_results)   #functions_output
+    # Step 3: Handle output (formatting and exporting to .txt file) In class 
+    # handle_output(all_results)   #functions_output
 
+    # Debug messages 
     if besteverdeling:
         if min_aanslag < 0:
             print(f"U krijgt terug:  €{min_aanslag:,.0f}  voor box1 {best_deel_box1} voor box3 {best_deel_box3}  voor div {best_deel_div}    ")
         else:
             print(f"U moet betalen:  €{min_aanslag:,.0f}  voor box1 {best_deel_box1} voor box3 {best_deel_box3}  voor div {best_deel_div}    ")
 
-
-if __name__ == "__main__":
-    main()
+    # At the end of the function, return the results:
+    return all_results

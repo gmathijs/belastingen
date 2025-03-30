@@ -17,7 +17,7 @@ def get_user_input():
 
 
         "primary": {
-            "naam": "Mevrouw Nix",           # Identificatie voor de eerste persoon
+            "naam": "M F LEEMHUIS-WILMINK",           # Identificatie voor de eerste persoon
             "aow_er": 0,                    # AOW status (0 = geen AOW, 1 = AOW na 1946, 2 = AOW voor 1946)
             "heeft_partner": False,          # Whether you have a fiscal partner
             "Inkomen": 0,                   # Inkomen uit artbeid
