@@ -55,9 +55,8 @@ En hoewel ik met git werk heb ik er eigenlijk geen compleet beeld van wat allema
 Ben met pensioen heb tijd zat maar het moet wel leuk blijven.  
 Niettemin wil ik graag bijleren van de jongere talenten
 
-
-Dee controle op input gegegevens is nu nog ver ondermaats, zeg maar die is er niet.
-Maar ja je moet iets te wensen overhouden.
+In de laatste update heb ik geprobeerd wat input checks erop los te laten.
+Ben er nog niet echt tevreden mee maar het schijnt te werken.
 
 Ieder opbouwend commentaar is uiteraard welkom. 
 
