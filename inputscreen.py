@@ -24,11 +24,14 @@ from functions_output import (format_table_all,
 from save_input import (read_input_from_csv, 
                         write_input_to_csv
                         )
-
-# Start of the standard class 
-
 class TaxInputApp:
-    """ Clas belastingen Nederland"""
+    """
+    Opent het GUI window om belasting gegevens in te vullen.
+    Vanuit het GUI window wordt de berekening gestart.
+    """
+    # ------------------
+    # Initialization
+    # ------------------
     def __init__(self, root):
         # Initialize all widgets as None first
         self.primary_aow = None
@@ -65,10 +68,8 @@ class TaxInputApp:
         self.create_primary_tab()
         self.create_partner_tab()
 
-        
         # Bind partner toggle
         self.has_partner.trace_add('write', lambda *_: self.update_partner_tab())
-        
         
         # Initialize data structure
         self.input_data = {
@@ -80,7 +81,6 @@ class TaxInputApp:
         self.calculating = False
         self.progress_label = ttk.Label(root, text="")
         self.progress_label.pack(pady=5)
-
 
         # Create button frame at bottom
         button_frame = ttk.Frame(root)
@@ -120,7 +120,11 @@ class TaxInputApp:
         ).pack(side=tk.RIGHT, padx=5)
 
     def load_csv_data(self):
-        """Load input data from CSV file"""
+        """
+            File Dialog Asks the user to give a Input CSV file 
+            Calls: Read_input_from_csv, populate_fields
+
+        """
         
         file_path = filedialog.askopenfilename(
             title="Select Input CSV File",
@@ -252,7 +256,9 @@ class TaxInputApp:
                 filename = f"{basename}_{counter}.txt"
                 counter += 1
 
-        
+    # ------------------
+    # Create Window Tabs
+    # ------------------        
     def create_general_tab(self):
         """General information tab"""
         ttk.Label(self.general_frame, text="Database Path:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
@@ -391,8 +397,6 @@ class TaxInputApp:
         self.primary_frame.columnconfigure(0, weight=1)
         self.primary_frame.columnconfigure(1, weight=3)
             
-
-        
     def create_partner_tab(self):
         """Partner tab (initially disabled)"""
         # Clear previous widgets if any
@@ -455,7 +459,9 @@ class TaxInputApp:
         # Switch to primary tab if disabling partner
         if not self.has_partner.get():
             self.notebook.select(self.primary_frame)
-
+    # ------------------
+    # Output on Screen Handling
+    # ------------------
     def handle_output(self, all_results):
         """Handle output display from within the class"""
         #Format and export the Box 3 tax calculation results.
@@ -500,7 +506,6 @@ class TaxInputApp:
         # Show in positioned window
         self.show_results_in_window(filename)
 
-
     def show_results_in_window(self, filename):
         """Display results in a window positioned on the right"""
         result_window = tk.Toplevel(self.root)
@@ -530,7 +535,9 @@ class TaxInputApp:
             text_widget.insert(tk.END, f"Error reading file: {str(e)}")
         
         text_widget.config(state=tk.DISABLED)
-        
+    # ------------------
+    # Button Actions
+    # ------------------
     def submit_data(self):
         """Collect all input data"""
         try:
@@ -632,7 +639,9 @@ class TaxInputApp:
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
-
+    # ------------------
+    # Validation of input
+    # ------------------
     def setup_validation(self):
         """Initialize validation system"""
         self.style = ttk.Style()
@@ -730,6 +739,11 @@ class TaxInputApp:
         return True
 
 class ToolTip:
+    """
+        Handelt de tooltips af. 
+        Bevat de defaults maar geeft ook de mogelijkheden voor 
+        persoonlijke aanpassingen
+    """
     def __init__(self, widget, text, 
                  bg="#ffffe0", fg="black", 
                  font=("tahoma", "12", "normal"),
@@ -787,9 +801,7 @@ class ToolTip:
         if tw:
             tw.destroy()
 
-
-
-# Your existing check_input function would be called here if needed
+# Check Input Data (wordt niet gebruikt vlgs mij)
 def check_input(data):
     """Validate and enforce dependencies in input data."""
 
@@ -830,21 +842,18 @@ def check_input(data):
 
     return data
 
-
-
-
-
-
-
-
+# Afmetingen Computer Scherm
 def get_screen_dimensions(root):
-    """ Calculate screen dimensions"""
+    """Bepaalt de afmetingen van het scherm om  ordentelijke 
+    invoer en uitvoer schermen te tonen
+    """
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     return screen_width, screen_height
 
-
-
+# ------------------------
+# Start het hoofdprogramma
+# ------------------------
 if __name__ == "__main__":
     root = tk.Tk()
     
