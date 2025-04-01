@@ -117,17 +117,20 @@ def belastingen(input_data):
     if input_data['primary']['heeft_partner'] and input_data['programsetting']['mode'] ==2: 
         besteverdeling = True
 
-        for step in [0.1, 0.05, 0.01]:
-                num_steps = int(1 / step) + 1
-                print(f"\nStep size: {step} ({num_steps} steps)")
-                for val in [i * step for i in range(num_steps)]:
-                    print(round(val, 2), end=" ")
+        """        for step in [0.1, 0.05, 0.01]:
+            num_steps = int(1 / step) + 1
+            print(f"\nStep size: {step} ({num_steps} steps)")
+            for val in [i * step for i in range(num_steps)]:
+                print(round(val, 2), end=" ")
 
         step = 0.1      # Make sure to check if the step size is divisible by 1
                         # steps smaller then 0.05 must be avoide due to calculation time
         assert (1 % step) == 0, f"Step {step} must divide 1 without remainder!"
 
-        num_steps = int(1 / step) + 1
+        num_steps = int(1 / step) + 1"""
+
+        step=0.1
+        num_steps=11
 
         for deel_box1 in [i * step for i in range(num_steps)]:
             input_data['primary']['deel_box1'] = deel_box1
