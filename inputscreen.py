@@ -5,6 +5,7 @@
 # pylint: disable=redefined-outer-name
 # pylint: disable=trailing-whitespace
 # pylint: disable=line-too-long
+# pylint: disable=missing-function-docstring
 
 # Standard library
 import os
@@ -39,6 +40,7 @@ class TaxInputApp:
         self.filename = "belasting"
 
         self.root = root
+        self.setup_validation()  # Initialize validation system
         self.root.title("Inkomsten Belasting  Input")
         
         # Initialize partner toggle variable
@@ -257,7 +259,7 @@ class TaxInputApp:
         self.db_path = ttk.Entry(self.general_frame)
         self.db_path.grid(row=0, column=1, padx=5, pady=5)
         self.db_path.insert(0, "mijn_belastingen.db")
-        ToolTip(self.db_path, "Pathname to the database)")
+        ToolTip(self.db_path, "Pathname to the database")
 
         ttk.Label(self.general_frame, text="Opslagnaam:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
         self.opslagnaam = ttk.Entry(self.general_frame)
@@ -271,24 +273,47 @@ class TaxInputApp:
         self.year.current(0)
         
         # Box 3 assets
-        ttk.Label(self.general_frame, text="Box 3 deel", font=('Arial', 10, 'bold')).grid(row=4, column=0, columnspan=2, pady=5)
+        ttk.Label(self.general_frame, text="Opgaven Box 3 ", font=('Arial', 14, 'bold')).grid(row=4, column=0, columnspan=2, pady=5)
         
         fields = [
-            ("Spaargeld:", "spaargeld", "100"),
-            ("Beleggingen:", "belegging", "0"),
-            ("Ontroeren goed:", "ontroerend", "0"),
-            ("WOZ Waarde:", "WOZ_Waarde", "0"),
-            ("Schuld box3:", "schuld", "0"),
-            ("Ingehouden dividend:", "divident", "0"),
-            ("Aftrek Eigen woning:", "AftrekEW", "0")
+            ("Spaargeld:", "spaargeld", "100", "Opgeteld spaargeld op alle rekeningen"),
+            ("Beleggingen:", "belegging", "0", "Totaal uitstaande beleggingen op 1 Januari (zie jaaropgaven)"),
+            ("Ontroeren goed:", "ontroerend", "0", "Waarde ontroerend goed, vakantie huis etc."),
+            ("WOZ Waarde:", "WOZ_Waarde", "0", "WOZ waarde peiling 1 januari van het belastingjaar"),
+            ("Schuld box3:", "schuld", "0", "Aftrekbare Schulden in box 3 check de belasting website"),
+            ("Ingehouden dividend:", "divident", "0", "Totaal ingehouden divident"),
+            ("Aftrek Eigen woning:", "AftrekEW", "0", "Aftrekbare kosten eigenwoning, betaalde rente, afsluitkosten")
         ]
         
-        for i, (label, attr, default) in enumerate(fields, start=5):
+        for i, (label, attr, default, tooltip) in enumerate(fields, start=5):
             ttk.Label(self.general_frame, text=label).grid(row=i, column=0, sticky=tk.W, padx=5, pady=5)
             setattr(self, attr, ttk.Entry(self.general_frame))
             getattr(self, attr).grid(row=i, column=1, padx=5, pady=5)
             getattr(self, attr).insert(0, default)
-        
+
+            # Create validated entry
+            entry = ttk.Entry(
+                self.general_frame,
+                validate="key",
+                validatecommand=self.validate_num_cmd
+            )
+            entry.grid(row=i, column=1, padx=5, pady=5)
+            entry.insert(0, default)
+            
+            # Bind to show validation status
+            entry.bind("<FocusOut>", self.update_validation_style)
+            self.update_validation_style(None, entry)  # Initial validation
+            
+            setattr(self, attr, entry)
+            
+            # Add tooltip if specified
+            #if tooltip:
+            #    ToolTip(entry, tooltip)
+            
+            # Add tooltip if specified
+            if tooltip:
+                ToolTip(getattr(self, attr), tooltip)
+       
         # Program settings
         ttk.Label(self.general_frame, text="Program Mode:").grid(row=12, column=0, sticky=tk.W, padx=5, pady=5)
         self.mode = ttk.Combobox(self.general_frame, values=["Normaal", "Bereken optimale verdeling"])
@@ -297,9 +322,14 @@ class TaxInputApp:
         
     def create_primary_tab(self):
         """Primary taxpayer tab"""
+        # Clear previous widgets if any (safety measure)
+        for widget in self.primary_frame.winfo_children():
+            widget.destroy()
+        
+        # Name field
         ttk.Label(self.primary_frame, text="Naam:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
         self.primary_naam = ttk.Entry(self.primary_frame)
-        self.primary_naam.grid(row=0, column=1, padx=5, pady=5)
+        self.primary_naam.grid(row=0, column=1, padx=5, pady=5, sticky=tk.EW)
         self.primary_naam.insert(0, "naam")
         
         # Partner checkbox
@@ -309,54 +339,114 @@ class TaxInputApp:
             variable=self.has_partner
         ).grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
         
-        # Other primary fields
+        # Other primary fields with tooltips
         fields = [
-            ("AOW Status:", "primary_aow", ["No AOW", "AOW after 1946", "AOW before 1946"], 0),
-            ("Inkomen uit Arbeid:", "primary_inkomen", "0"),
-            ("Pensioen/Uitkering:", "primary_pensioen", "0"),
-            ("Box 1 Uw Deel:", "primary_deel_box1", "1"),
-            ("Box 3 Uw Deel:", "primary_deel_box3", "1"),
-            ("Dividend Uw deel:", "primary_deel_div", "1"),
-            ("Ingehouden loonheffing:", "primary_al_ingehouden", "0"),
-            ("Betaald voorlopige belasting:", "primary_voorlopige_aanslag", "0")
+            ("AOW Status:", "primary_aow", ["No AOW", "AOW after 1946", "AOW before 1946"], 0, "Selecteer of persoon AOW heeft"),
+            ("Inkomen uit Arbeid:", "primary_inkomen", "0", "Totaal Inkomen uit Arbeid"),
+            ("Pensioen/Uitkering:", "primary_pensioen", "0", "Pensioen en andere uitkeringen"),
+            ("Box 1 Uw Deel:", "primary_deel_box1", "1", "0 - 1 Welk deel van Box1 komt voor jouw rekening"),
+            ("Box 3 Uw Deel:", "primary_deel_box3", "1", "0 - 1 Welk deel van Box3 komt voor jouw rekening"),
+            ("Dividend Uw deel:", "primary_deel_div", "1", "0 - 1 Welk deel van Dividend komt voor jouw rekening"),
+            ("Ingehouden loonheffing:", "primary_al_ingehouden", "0", "Totale ingehouden loonheffing zie jaaropgaven"),
+            ("Betaald voorlopige belasting:", "primary_voorlopige_aanslag", "0", "Al betaald via Voorlopige Aanslag")
         ]
-        
+
         for i, (label, attr, *rest) in enumerate(fields, start=2):
+            # Create label
             ttk.Label(self.primary_frame, text=label).grid(row=i, column=0, sticky=tk.W, padx=5, pady=5)
+            
+            # Create widget
             if isinstance(rest[0], list):  # Combobox
-                setattr(self, attr, ttk.Combobox(self.primary_frame, values=rest[0]))
-                getattr(self, attr).current(rest[1])
-            else:  # Entry
-                setattr(self, attr, ttk.Entry(self.primary_frame))
-                getattr(self, attr).insert(0, rest[0])
-            getattr(self, attr).grid(row=i, column=1, padx=5, pady=5)
+                widget = ttk.Combobox(self.primary_frame, values=rest[0])
+                widget.current(rest[1])
+                tooltip_text = rest[2] if len(rest) > 2 else ""
+            else:  # Entry field
+                # Determine validation type
+                if attr in ['primary_deel_box1', 'primary_deel_box3', 'primary_deel_div']:
+                    validate_cmd = self.validate_share_cmd
+                else:
+                    validate_cmd = self.validate_num_cmd
+                
+                widget = ttk.Entry(
+                    self.primary_frame,
+                    validate="key",
+                    validatecommand=validate_cmd
+                )
+                widget.insert(0, rest[0])
+                tooltip_text = rest[1] if len(rest) > 1 else ""
+                
+                # Set up validation
+                widget.bind("<FocusOut>", lambda e, w=widget: self.update_validation_style(widget=w))
+                self.update_validation_style(widget=widget)
+            
+            # Grid the widget
+            widget.grid(row=i, column=1, padx=5, pady=5, sticky=tk.EW)
+            setattr(self, attr, widget)
+            
+            # Add tooltip if specified
+            if tooltip_text:
+                ToolTip(widget, tooltip_text)
+        
+        # Configure column weights
+        self.primary_frame.columnconfigure(0, weight=1)
+        self.primary_frame.columnconfigure(1, weight=3)
+            
+
         
     def create_partner_tab(self):
         """Partner tab (initially disabled)"""
+        # Clear previous widgets if any
+        for widget in self.partner_frame.winfo_children():
+            widget.destroy()
+
+
         ttk.Label(self.partner_frame, text="Naam:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
         self.partner_naam = ttk.Entry(self.partner_frame)
-        self.partner_naam.grid(row=0, column=1, padx=5, pady=5)
+        self.partner_naam.grid(row=0, column=1, padx=5, pady=5, sticky=tk.EW)
         self.partner_naam.insert(0, "Persoon 2")
         
         # Partner fields
         fields = [
-            ("AOW Status:", "partner_aow", ["No AOW", "AOW after 1946", "AOW before 1946"], 1),
-            ("Inkomen uit Arbeid:", "partner_inkomen", "0"),
-            ("Pensioen/Uitkering:", "partner_pensioen", "0"),
-            ("Ingehouden loonheffing:", "partner_al_ingehouden", "0"),
-            ("Betaald voorlopige belasting:", "partner_voorlopige_aanslag", "0")
+            ("AOW Status:", "partner_aow", ["No AOW", "AOW after 1946", "AOW before 1946"], 0, "Selecteer of persoon AOW heeft"),
+            ("Inkomen uit Arbeid:", "partner_inkomen", "0","Totaal Inkomen uit Arbeid"),
+            ("Pensioen/Uitkering:", "partner_pensioen", "0","Pensioen en andere uitkeringen"),
+            ("Ingehouden loonheffing:", "partner_al_ingehouden", "0","Totale ingehouden loonheffing zie jaaropgaven"),
+            ("Betaald voorlopige belasting:", "partner_voorlopige_aanslag", "0", "Al betaald via Voorlopige Aanslag")
         ]
         
-        for i, (label, attr, *rest) in enumerate(fields, start=1):
+        for i, (label, attr, *rest) in enumerate(fields, start=1):  # Start at row 1
             ttk.Label(self.partner_frame, text=label).grid(row=i, column=0, sticky=tk.W, padx=5, pady=5)
+            
             if isinstance(rest[0], list):  # Combobox
-                setattr(self, attr, ttk.Combobox(self.partner_frame, values=rest[0]))
-                getattr(self, attr).current(rest[1])
-            else:  # Entry
-                setattr(self, attr, ttk.Entry(self.partner_frame))
-                getattr(self, attr).insert(0, rest[0])
-            getattr(self, attr).grid(row=i, column=1, padx=5, pady=5)
+                widget = ttk.Combobox(self.partner_frame, values=rest[0])
+                widget.current(rest[1])
+                tooltip_text = rest[2] if len(rest) > 2 else ""
+            else:  # Entry field
+                # Use share validation for deel fields
+                validate_cmd = self.validate_num_cmd
+                    
+                widget = ttk.Entry(
+                    self.partner_frame,
+                    validate="key",
+                    validatecommand=validate_cmd
+                )
+                widget.insert(0, rest[0])
+                tooltip_text = rest[1] if len(rest) > 1 else ""
+                
+                # Set up validation styling
+                widget.bind("<FocusOut>", lambda e, w=widget: self.update_validation_style(widget=w))
+                self.update_validation_style(widget=widget)
+            
+            widget.grid(row=i, column=1, padx=5, pady=5, sticky=tk.EW)
+            setattr(self, attr, widget)
+            
+            if tooltip_text:
+                ToolTip(widget, tooltip_text)
         
+        # Configure column weights
+        self.partner_frame.columnconfigure(0, weight=1)
+        self.partner_frame.columnconfigure(1, weight=3)
+
     def update_partner_tab(self):
         """Update partner tab state based on checkbox (THE FIXED VERSION)"""
         new_state = "normal" if self.has_partner.get() else "disabled"
@@ -542,41 +632,160 @@ class TaxInputApp:
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
 
+
+    def setup_validation(self):
+        """Initialize validation system"""
+        self.style = ttk.Style()
+        self.style.configure("Valid.TEntry", foreground="green")
+        self.style.configure("Error.TEntry", foreground="red")
+        
+        # List of share fields that need 0-1 validation
+        self.share_fields = ['primary_deel_box1', 'primary_deel_box3', 'primary_deel_div']
+        
+        # Create validation commands
+        self.validate_num_cmd = (self.root.register(self.validate_number_input), '%P')
+        self.validate_share_cmd = (self.root.register(self.validate_share_input), '%P')
+
+    def update_validation_style(self, event=None, widget=None):
+        """Update the visual style based on validation status"""
+        widget = widget or event.widget
+        value = widget.get()
+        
+        try:
+            if value == "":
+                widget.configure(style="TEntry")
+                return
+                
+            num = float(value)
+            
+            # Check if this is a share field by widget name
+            widget_name = str(widget)
+            is_share_field = any(field in widget_name for field in self.share_fields)
+            
+            if is_share_field:
+                widget.configure(style="Valid.TEntry" if 0 <= num <= 1 else "Error.TEntry")
+            else:
+                widget.configure(style="Valid.TEntry" if num >= 0 else "Error.TEntry")
+                
+        except ValueError:
+            widget.configure(style="Error.TEntry")
+
+    def validate_share_input(self, new_value):
+        """Validate that input is a number between 0 and 1"""
+        try:
+            if new_value == "":  # Allow empty field temporarily
+                return True
+                
+            num = float(new_value)
+            return 0 <= num <= 1  # Only allow numbers between 0 and 1
+            
+        except ValueError:
+            return False
+
+
+
+    
+    def validate_number_input(self, new_value):
+        """Validate that input is a number >= 0"""
+        try:
+            if new_value == "":  # Allow empty field temporarily
+                return True
+                
+            # Try converting to float
+            num = float(new_value)
+            
+            # Check if number is >= 0
+            return num >= 0
+            
+        except ValueError:
+            return False
+
+    def validate_all_fields(self):
+        """Validate all numeric fields before submission"""
+        fields = ["spaargeld", "belegging", "ontroerend", "WOZ_Waarde", 
+                 "schuld", "divident", "AftrekEW","primary_inkomen","primary_pensioen",
+                 "primary_deel_div","primary_al_ingehouden","primary_voorlopige_aanslag",
+                 "primary_deel_box1", "primary_deel_box3"]
+        
+
+        for field in fields:
+            entry = getattr(self, field)
+            value = entry.get()
+            
+            if value == "":
+                messagebox.showerror("Error", f"Field {field} cannot be empty")
+                entry.focus_set()
+                return False
+                
+            try:
+                if float(value) < 0:
+                    messagebox.showerror("Error", f"Field {field} must be >= 0")
+                    entry.focus_set()
+                    return False
+            except ValueError:
+                messagebox.showerror("Error", f"Field {field} must be a number")
+                entry.focus_set()
+                return False
+                
+        return True
+
 class ToolTip:
-    def __init__(self, widget, text):
+    def __init__(self, widget, text, 
+                 bg="#ffffe0", fg="black", 
+                 font=("tahoma", "12", "normal"),
+                 delay=500, 
+                 x_offset=150, y_offset=25,
+                 border=1, 
+                 justify="left",
+                 relief="solid"):
         self.widget = widget
         self.text = text
-        self.tip_window = None
-        self.widget.bind("<Enter>", self.show_tip)
-        self.widget.bind("<Leave>", self.hide_tip)
+        self.bg = bg
+        self.fg = fg
+        self.font = font
+        self.delay = delay  # in milliseconds
+        self.x_offset = x_offset
+        self.y_offset = y_offset
+        self.border = border
+        self.justify = justify
+        self.relief = relief
+        self.tipwindow = None
+        self.id = None
+        self.widget.bind("<Enter>", self.schedule_tip)
+        self.widget.bind("<Leave>", self.hidetip)
+        self.widget.bind("<ButtonPress>", self.hidetip)
 
-    def show_tip(self, event=None):
-        """Display tooltip on hover"""
-        if self.tip_window or not self.text:
+    def schedule_tip(self, event):
+        self.id = self.widget.after(self.delay, self.showtip)
+
+    def showtip(self):
+        if self.tipwindow or not self.text:
             return
-        x, y, _, _ = self.widget.bbox("insert")
-        x += self.widget.winfo_rootx() + 25
-        y += self.widget.winfo_rooty() + 25
         
-        self.tip_window = tk.Toplevel(self.widget)
-        self.tip_window.wm_overrideredirect(True)
-        self.tip_window.wm_geometry(f"+{x}+{y}")
+        # Calculate position
+        x = self.widget.winfo_rootx() + self.x_offset
+        y = self.widget.winfo_rooty() + self.y_offset
         
-        label = ttk.Label(
-            self.tip_window,
-            text=self.text,
-            background="#ffffe0",
-            relief="solid",
-            borderwidth=1,
-            padding=(4, 2)
-        )
-        label.pack()
+        # Create window
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        
+        # Customize appearance
+        label = tk.Label(tw, text=self.text, justify=self.justify,
+                      background=self.bg, foreground=self.fg,
+                      relief=self.relief, borderwidth=self.border,
+                      font=self.font)
+        label.pack(ipadx=1)
 
-    def hide_tip(self, event=None):
-        """Destroy tooltip"""
-        if self.tip_window:
-            self.tip_window.destroy()
-        self.tip_window = None
+    def hidetip(self, event=None):
+        if self.id:
+            self.widget.after_cancel(self.id)
+            self.id = None
+        tw = self.tipwindow
+        self.tipwindow = None
+        if tw:
+            tw.destroy()
 
 
 
