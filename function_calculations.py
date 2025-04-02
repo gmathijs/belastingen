@@ -47,7 +47,7 @@ def calculate_box1(input_data, person, tussenresultaat):
 
     kortingen_totaal = heffingskorting + arbeidskorting + ouderenkorting
 
-    dividend_deel = input_data['divident'] * person['deel_div']
+    dividend_deel = input_data['dividend'] * person['deel_div']
 
 
 
@@ -80,7 +80,7 @@ def calculate_box1(input_data, person, tussenresultaat):
         "TotaalInkomstenbelasting": TotaalInkomstenBelasting,   # Totaal aan Box1 + Box3 belastingen   
         "TotaalInkomstenbelastingInclBox3": TotaalInkomstenBelastingInclBox3,   # Totaal aan Box1 + Box3 belastingen 
         "Dividend uw deel": dividend_deel,                      # Uw deel dividend
-        "ingehouden_belasting": ingehouden_belasting,            # Al ingehouden loonheffing + divident  
+        "ingehouden_belasting": ingehouden_belasting,            # Al ingehouden loonheffing + dividend  
         "Bedrag_aanslag": bedrag_aanslag,                      # verschuldigd 
         "Nieuw_bedrag_aanslag": nieuw_bedrag_aanslag,           # inclusief al betaald 
         "netto_inkomen": netto,                                 # Net income after taxes and credits
@@ -104,10 +104,10 @@ def calculate_inkomen_werkenwoning(input_data, person, tussenresultaat):
 
     # Bereken het EigenWoning forfait
     calculator_ewf = EigenWoningForfaitCalculator(input_data["db_path"])
-    eigenwoningforfait = calculator_ewf.bereken_eigenwoningforfait(  input_data["WOZ_Waarde"],input_data["year"])
+    eigenwoningforfait = calculator_ewf.bereken_eigenwoningforfait(  input_data["woz_waarde"],input_data["year"])
 
     # Voeg hier de tariefsaanpassing EigenWoning toe 
-    aftrekeigenwoning =  input_data["AftrekEW"]   # totaal bedrag
+    aftrekeigenwoning =  input_data["aftrek_eigenwoning"]   # totaal bedrag
 
     # Correcie bepaal extra aftrek ivm tariefsaanpassing hogere inkomens
     calc_tariefsaanpassing = TariefAanpassingEigenWoning(input_data["db_path"])
@@ -203,7 +203,7 @@ def calculate_ew_forfait(input_data):
     calculator_ewf = EigenWoningForfaitCalculator(input_data["db_path"])
 
     # Perform the calculation
-    results_ewf = calculator_ewf.bereken_eigenwoningforfait(  input_data["WOZ_Waarde"],input_data["year"])
+    results_ewf = calculator_ewf.bereken_eigenwoningforfait(  input_data["woz_waarde"],input_data["year"])
 
     # Close the calculator
     calculator_ewf.close()

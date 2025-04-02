@@ -11,4 +11,11 @@ probeersel.py
 .vscode/extensions.json
 settings.json
 __pycache__/belastingen.cpython-311.pyc
+
 __pycache__/belastingen.cpython-311.pyc
+__pycache__/classes_IB.cpython-311.pyc
+__pycache__/function_calculations.cpython-311.pyc
+__pycache__/functions_input.cpython-311.pyc
+__pycache__/functions_output.cpython-311.pyc
+__pycache__/save_input.cpython-311.pyc
+widget_table.numbers

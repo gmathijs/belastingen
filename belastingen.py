@@ -114,7 +114,7 @@ def belastingen(input_data):
     teller = 0
     resultaat_lijst = []  # Initialize an empty list to store results
 
-    if input_data['primary']['heeft_partner'] and input_data['programsetting']['mode'] ==2: 
+    if input_data['primary']['heeft_partner'] and input_data['programsetting']['programsetting_mode'] ==2: 
         besteverdeling = True
 
         """        for step in [0.1, 0.05, 0.01]:

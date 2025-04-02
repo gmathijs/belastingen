@@ -7,6 +7,8 @@
 # pylint: disable=line-too-long
 # pylint: disable=missing-function-docstring
 
+# CTRL K J = unfold CTRK J = Fold
+
 # Standard library
 import os
 import threading
@@ -36,7 +38,6 @@ class TaxInputApp:
         # Initialize all widgets as None first
         self.primary_aow = None
         self.partner_aow = None
-        # Add all other dynamically created widgets here
         self.primary_naam = None
         self.partner_naam = None
 
@@ -46,8 +47,9 @@ class TaxInputApp:
         self.setup_validation()  # Initialize validation system
         self.root.title("Inkomsten Belasting  Input")
         
+
         # Initialize partner toggle variable
-        self.has_partner = tk.BooleanVar(value=False)
+        self.primary_heeft_partner = tk.BooleanVar(value=False)
         
         # Create notebook
         self.notebook = ttk.Notebook(root)
@@ -68,8 +70,9 @@ class TaxInputApp:
         self.create_primary_tab()
         self.create_partner_tab()
 
+
         # Bind partner toggle
-        self.has_partner.trace_add('write', lambda *_: self.update_partner_tab())
+        #self.primary_heeft_partner.trace_add('write', lambda *_: self.update_partner_tab())
         
         # Initialize data structure
         self.input_data = {
@@ -77,6 +80,7 @@ class TaxInputApp:
             "partner": {},
             "programsetting": {}
         }
+
 
         self.calculating = False
         self.progress_label = ttk.Label(root, text="")
@@ -119,6 +123,16 @@ class TaxInputApp:
             **btn_style
         ).pack(side=tk.RIGHT, padx=5)
 
+        # Run audit last
+        self.audit_widget_names() 
+
+    def audit_widget_names(self):
+        """Print all widget attributes and their types"""
+        print("\n=== WIDGET AUDIT ===")
+        for name, obj in vars(self).items():
+            if isinstance(obj, (tk.Widget, ttk.Widget, tk.Variable)):
+                print(f"{name.ljust(25)} {str(type(obj)).split('.')[-1]}")
+
     def load_csv_data(self):
         """
             File Dialog Asks the user to give a Input CSV file 
@@ -146,43 +160,126 @@ class TaxInputApp:
 
     def populate_fields(self, input_data):
         """Populate GUI fields with data from dictionary"""
-
         try:
-            # Safely get widgets with existence checks
-            if hasattr(self, 'primary_aow') and self.primary_aow:
-                aow_index = input_data['primary'].get('aow_er', 0)
-                if 0 <= aow_index < len(self.primary_aow['values']):
-                    self.primary_aow.current(aow_index)
+            # Debug input
+            print("Input data received:", input_data.keys())
+            if 'primary' in input_data:
+                print("Primary data:", input_data['primary'].keys())
             
-            # Partner AOW
-            if (input_data['primary'].get('heeft_partner', False) and 
-                hasattr(self, 'partner_aow') and 
-                self.partner_aow):
-                partner_aow_index = input_data['partner'].get('aow_er', 1)
-                if 0 <= partner_aow_index < len(self.partner_aow['values']):
-                    self.partner_aow.current(partner_aow_index)
-            
-            # Numeric fields with validation
-            numeric_fields = {
-                'primary': ['inkomen', 'pensioen', 'deel_box1', 'deel_box3', 
-                        'deel_div', 'al_ingehouden', 'voorlopige_aanslag'],
-                'partner': ['inkomen', 'pensioen', 'al_ingehouden', 'voorlopige_aanslag']
+            # ===== General Tab Fields =====
+            general_fields = {
+                'db_path': 'db_path',  
+                'opslagnaam': 'opslagnaam',                          # Common alternative name
+                'year': 'year',
+                'aftrek_eigenwoning': 'aftrek_eigenwoning',
+                'spaargeld': 'spaargeld',
+                'belegging': 'belegging',
+                'ontroerend': 'ontroerend',
+                'woz_waarde': 'woz_waarde',
+                'schuld': 'schuld',
+                'dividend': 'dividend'
             }
             
-            for person, fields in numeric_fields.items():
-                for field in fields:
-                    widget_name = f"{person}_{field}"
-                    if hasattr(self, widget_name):
-                        widget = getattr(self, widget_name)
-                        value = str(input_data[person].get(field, '0'))
-                        widget.delete(0, tk.END)
-                        widget.insert(0, value)
+            for field, widget_name in general_fields.items():
+                if hasattr(self, widget_name):
+                    widget = getattr(self, widget_name)
+                    value = str(input_data.get(field, ''))
+                    widget.delete(0, tk.END)
+                    widget.insert(0, value)
+                    print(f"Set {widget_name} to {value}")  # Debug
+                else:
+                    print(f"Widget {widget_name} not found")  # Debug
+
+            # ===== Primary Tab Fields =====
+            # AOW status
+            if hasattr(self, 'primary_aow') and self.primary_aow:
+                aow_index = input_data['primary'].get('aow_er', 0)
+                self.primary_aow.current(aow_index)
+                print(f"Set AOW to index {aow_index}")  # Debug
             
-            # Update partner tab state
+        # Partner checkbox - using the correct variable name
+            if hasattr(self, 'primary_heeft_partner'):
+                # Get the value from input data (default to False if not found)
+                partner_status = input_data['primary'].get('heeft_partner', False)
+                
+                # Set the checkbox value
+                self.primary_heeft_partner.set(partner_status)
+                print(f"DEBUG: Partner checkbox set to {partner_status}")
+                
+                # Force GUI update
+                self.update_partner_tab()
+                
+                # If partner exists, make sure tab is enabled immediately
+                if partner_status and hasattr(self, 'partner_tab'):
+                    self.notebook.tab(self.partner_tab, state='normal')
+
+            # Primary fields with case-insensitive fallback
+            primary_mappings = {
+                'Naam': 'primary_naam',
+                'Inkomen': 'primary_inkomen',
+                'Pensioen': 'primary_pensioen',
+                'deel_box1': 'primary_deel_box1',
+                'deel_box3': 'primary_deel_box3',
+                'deel_div': 'primary_deel_div',
+                'al_ingehouden': 'primary_al_ingehouden',
+                'voorlopige_aanslag': 'primary_voorlopige_aanslag'
+            }
+            
+            for field, widget_name in primary_mappings.items():
+                if hasattr(self, widget_name):
+                    value = input_data['primary'].get(field) or input_data['primary'].get(field.lower(), '')
+                    widget = getattr(self, widget_name)
+                    widget.delete(0, tk.END)
+                    widget.insert(0, str(value))
+                    print(f"Set {widget_name} to {value}")  # Debug
+
+            # ===== Partner Tab Fields =====
+            # ===== Partner Checkbox =====
+            if hasattr(self, 'primary_heeft_partner'):
+                # Get partner status - default to False if not found
+                heeft_partner = input_data['primary'].get('heeft_partner', False)
+                self.primary_heeft_partner.set(heeft_partner)
+                print(f"DEBUG: Partner checkbox set to {heeft_partner}")
+
+                # ===== Critical Fix =====
+                # Immediately process partner data if exists
+                if heeft_partner and 'partner' in input_data:
+                    # Force partner tab to be visible first
+                    if hasattr(self, 'partner_tab'):
+                        self.notebook.tab(self.partner_tab, state='normal')
+                    
+                    # Now populate partner fields
+                    partner_mappings = {
+                        'naam': 'partner_naam',
+                        'aow_er': 'partner_aow',
+                        'Inkomen': 'partner_inkomen',
+                        'Pensioen': 'partner_pensioen',
+                        'al_ingehouden': 'partner_al_ingehouden',
+                        'voorlopige_aanslag': 'partner_voorlopige_aanslag',
+                        'deel_box1': 'partner_deel_box1',
+                        'deel_box3': 'partner_deel_box3',
+                        'deel_div': 'partner_deel_div'
+                    }
+
+                    for field, widget_name in partner_mappings.items():
+                        if hasattr(self, widget_name):
+                            widget = getattr(self, widget_name)
+                            value = str(input_data['partner'].get(field, ''))
+                            
+                            if isinstance(widget, ttk.Combobox):
+                                widget.set(value)
+                            else:
+                                widget.delete(0, tk.END)
+                                widget.insert(0, value)
+                            print(f"Set {widget_name} to {value}")
+
+            # Force final GUI update
             self.update_partner_tab()
-        
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to populate fields:\n{str(e)}")
+            raise
+
 
     def start_calculation(self):
         """Start the tax calculation process"""
@@ -285,10 +382,10 @@ class TaxInputApp:
             ("Spaargeld:", "spaargeld", "100", "Opgeteld spaargeld op alle rekeningen"),
             ("Beleggingen:", "belegging", "0", "Totaal uitstaande beleggingen op 1 Januari (zie jaaropgaven)"),
             ("Ontroeren goed:", "ontroerend", "0", "Waarde ontroerend goed, vakantie huis etc."),
-            ("WOZ Waarde:", "WOZ_Waarde", "0", "WOZ waarde peiling 1 januari van het belastingjaar"),
+            ("WOZ Waarde:", "woz_waarde", "0", "WOZ waarde peiling 1 januari van het belastingjaar"),
             ("Schuld box3:", "schuld", "0", "Aftrekbare Schulden in box 3 check de belasting website"),
-            ("Ingehouden dividend:", "divident", "0", "Totaal ingehouden divident"),
-            ("Aftrek Eigen woning:", "AftrekEW", "0", "Aftrekbare kosten eigenwoning, betaalde rente, afsluitkosten")
+            ("Ingehouden dividend:", "dividend", "0", "Totaal ingehouden dividend"),
+            ("Aftrek Eigen woning:", "aftrek_eigenwoning", "0", "Aftrekbare kosten eigenwoning, betaalde rente, afsluitkosten")
         ]
         
         for i, (label, attr, default, tooltip) in enumerate(fields, start=5):
@@ -322,9 +419,9 @@ class TaxInputApp:
        
         # Program settings
         ttk.Label(self.general_frame, text="Program Mode:").grid(row=12, column=0, sticky=tk.W, padx=5, pady=5)
-        self.mode = ttk.Combobox(self.general_frame, values=["Normaal", "Bereken optimale verdeling"])
-        self.mode.grid(row=12, column=1, padx=5, pady=5)
-        self.mode.current(0)
+        self.programsetting_mode = ttk.Combobox(self.general_frame, values=["Normaal", "Bereken optimale verdeling"])
+        self.programsetting_mode.grid(row=12, column=1, padx=5, pady=5)
+        self.programsetting_mode.current(0)
         
     def create_primary_tab(self):
         """Primary taxpayer tab"""
@@ -342,8 +439,10 @@ class TaxInputApp:
         ttk.Label(self.primary_frame, text="Heeft Partner:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
         ttk.Checkbutton(
             self.primary_frame,
-            variable=self.has_partner
+            variable=self.primary_heeft_partner,
+            command=self.update_partner_tab  # Ensure this is connected
         ).grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
+
         
         # Other primary fields with tooltips
         fields = [
@@ -453,11 +552,12 @@ class TaxInputApp:
 
     def update_partner_tab(self):
         """Update partner tab state based on checkbox (THE FIXED VERSION)"""
-        new_state = "normal" if self.has_partner.get() else "disabled"
+
+        new_state = "normal" if self.primary_heeft_partner.get() else "disabled"
         self.notebook.tab(self.partner_frame, state=new_state)
         
         # Switch to primary tab if disabling partner
-        if not self.has_partner.get():
+        if not self.primary_heeft_partner.get():
             self.notebook.select(self.primary_frame)
     # ------------------
     # Output on Screen Handling
@@ -546,17 +646,17 @@ class TaxInputApp:
                 "opslagnaam": self.opslagnaam.get(),
                 "db_path": self.db_path.get(),
                 "year": int(self.year.get()),
-                "AftrekEW": float(self.AftrekEW.get()),
+                "aftrek_eigenwoning": float(self.aftrek_eigenwoning.get()),
                 "spaargeld": float(self.spaargeld.get()),
                 "belegging": float(self.belegging.get()),
                 "ontroerend": float(self.ontroerend.get()),
-                "WOZ_Waarde": float(self.WOZ_Waarde.get()),
+                "woz_waarde": float(self.woz_waarde.get()),
                 "schuld": float(self.schuld.get()),
-                "divident": float(self.divident.get()),
+                "dividend": float(self.dividend.get()),
                 "primary": {
                     "naam": self.primary_naam.get(),
                     "aow_er": self.primary_aow.current(),
-                    "heeft_partner": self.has_partner.get(),
+                    "heeft_partner": self.primary_heeft_partner.get(),
                     "Inkomen": float(self.primary_inkomen.get()),
                     "Pensioen": float(self.primary_pensioen.get()),
                     "deel_box1": float(self.primary_deel_box1.get()),
@@ -566,12 +666,12 @@ class TaxInputApp:
                     "voorlopige_aanslag": float(self.primary_voorlopige_aanslag.get())
                 },
                 "programsetting": {
-                    "mode": self.mode.current() + 1  # +1 because combobox starts at 0
+                    "programsetting_mode": self.programsetting_mode.current() + 1  # +1 because combobox starts at 0
                 }
             })
             
             # Partner data if applicable
-            if self.has_partner.get():
+            if self.primary_heeft_partner.get():
                 self.input_data["partner"] = {
                     "naam": self.partner_naam.get(),
                     "aow_er": self.partner_aow.current(),
@@ -711,8 +811,8 @@ class TaxInputApp:
 
     def validate_all_fields(self):
         """Validate all numeric fields before submission"""
-        fields = ["spaargeld", "belegging", "ontroerend", "WOZ_Waarde", 
-                 "schuld", "divident", "AftrekEW","primary_inkomen","primary_pensioen",
+        fields = ["spaargeld", "belegging", "ontroerend", "woz_waarde", 
+                 "schuld", "dividend", "aftrek_eigenwoning","primary_inkomen","primary_pensioen",
                  "primary_deel_div","primary_al_ingehouden","primary_voorlopige_aanslag",
                  "primary_deel_box1", "primary_deel_box3"]
         
@@ -827,7 +927,7 @@ def check_input(data):
             data["primary"]["deel_box3"] = 1.0
             data["partner"]["deel_box3"] = 0.0
 
-        # Enforce deel_box3 divident dependency
+        # Enforce deel_box3 dividend dependency
         if "deel_div" in data["primary"]:
             data["partner"]["deel_div"] = 1 - data["primary"]["deel_div"]
         else:

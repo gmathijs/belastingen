@@ -52,7 +52,7 @@ def read_input_from_csv(filename):
         for row in reader:
             if len(row) < 2:
                 continue
-                
+               
             key, value = row[0], row[1]
             
             # Handle nested structures
@@ -127,20 +127,20 @@ def validate_tax_csv(file_path: str) -> Dict:
         raise ValueError(f"Cannot read file: {file_path}")
 
     required_fields = {
-        'opslagnaam', 'db_path', 'year', 'AftrekEW', 'spaargeld', 
-        'belegging', 'ontroerend', 'WOZ_Waarde', 'schuld', 'divident',
+        'opslagnaam', 'db_path', 'year', 'aftrek_eigenwoning', 'spaargeld', 
+        'belegging', 'ontroerend', 'woz_waarde', 'schuld', 'dividend',
         'primary.naam', 'primary.aow_er', 'primary.heeft_partner',
         'primary.Inkomen', 'primary.Pensioen', 'primary.deel_box1',
         'primary.deel_box3', 'primary.deel_div', 'primary.al_ingehouden',
-        'primary.voorlopige_aanslag', 'programsetting.mode'
+        'primary.voorlopige_aanslag', 'programsetting.programsetting_mode'
     }
 
     numeric_fields = {
-        'year', 'AftrekEW', 'spaargeld', 'belegging', 'ontroerend',
-        'WOZ_Waarde', 'schuld', 'divident', 'primary.Inkomen',
+        'year', 'aftrek_eigenwoning', 'spaargeld', 'belegging', 'ontroerend',
+        'woz_waarde', 'schuld', 'dividend', 'primary.Inkomen',
         'primary.Pensioen', 'primary.deel_box1', 'primary.deel_box3',
         'primary.deel_div', 'primary.al_ingehouden',
-        'primary.voorlopige_aanslag', 'programsetting.mode'
+        'primary.voorlopige_aanslag', 'programsetting.programsetting_mode'
     }
 
     boolean_fields = {

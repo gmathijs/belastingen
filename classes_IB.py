@@ -382,7 +382,7 @@ class EigenWoningForfaitCalculator:
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
 
-    def get_eigenwoningforfait_schijf(self, WOZ_Waarde, year):
+    def get_eigenwoningforfait_schijf(self, woz_waarde, year):
         """
         Fetch the tax bracket (schijf) for the given WOZ value and year.
         """
@@ -392,7 +392,7 @@ class EigenWoningForfaitCalculator:
             WHERE year = ? AND limit_WOZ >= ?
             ORDER BY schijf_no
             LIMIT 1
-        """, (year, WOZ_Waarde))
+        """, (year, woz_waarde))
         result = self.cursor.fetchone()
 
         if result:
@@ -405,7 +405,7 @@ class EigenWoningForfaitCalculator:
         
         return None
 
-    def bereken_eigenwoningforfait(self, WOZ_Waarde, year):
+    def bereken_eigenwoningforfait(self, woz_waarde, year):
         """
         Calculate the Eigen Woning Forfait based on the WOZ value and year.
         """
@@ -428,18 +428,18 @@ class EigenWoningForfaitCalculator:
         for schijf in schijven:
             schijf_no, limit_WOZ, percentage, bedrag = schijf
 
-            if WOZ_Waarde <= limit_WOZ:
+            if woz_waarde <= limit_WOZ:
                 if schijf_no == 1:
                     # First schijf has a fixed forfait of 0
                     eigenwoningforfait = 0
                 else:
                     # Calculate forfait based on the percentage
-                    eigenwoningforfait = percentage * WOZ_Waarde
+                    eigenwoningforfait = percentage * woz_waarde
                 break
         else:
             # If WOZ_Waarde exceeds the highest limit, use the last schijf
             last_schijf = schijven[-1]
-            eigenwoningforfait = last_schijf[3] + last_schijf[2] * (WOZ_Waarde - last_schijf[1])
+            eigenwoningforfait = last_schijf[3] + last_schijf[2] * (woz_waarde - last_schijf[1])
 
         return eigenwoningforfait
     

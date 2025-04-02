@@ -20,14 +20,14 @@ def format_table_all(data_in,data_out):
         ["Overzicht Opgaven voor berekening van ",data_in['naam']],
         ["Inkomen uit Arbeid", f"€{data_in['Inkomen']:,.0f}"],
         ["Pensioen of uitkering", f"€{data_in['Pensioen']:,.0f}"],
-        ["WOZ Waarde Woning", f"€{data_in['WOZ_Waarde']:,.0f}"],
+        ["WOZ Waarde Woning", f"€{data_in['woz_waarde']:,.0f}"],
 
         ["AOW Gerechtigd ", "Yes" if data_in['aow_er'] else "No"],     
         ["Heeft u een fiscale partner ", "Yes" if data_in['heeft_partner'] else "No"], 
-        ["Aftrekbare Schulden box1 ", f"€{data_in['AftrekEW']:,.0f}"],   
+        ["Aftrekbare Schulden box1 ", f"€{data_in['aftrek_eigenwoning']:,.0f}"],   
         ["-  Uw deel box1 ", f"{data_in['deel_box1']*100:,.0f}%"],  
         ["-  Uw deel box3 ", f"{data_in['deel_box3']*100:,.0f}%"],  
-        ["Ingehouden dividend belasting", f"€{data_in['divident']:,.0f}"],
+        ["Ingehouden dividend belasting", f"€{data_in['dividend']:,.0f}"],
         ["-  Uw deel dividend ", f"{data_in['deel_div']*100:,.0f}%"],   
         ["Voorlopige aanslag al betaald", f"€{data_in['voorlopige_aanslag']:,.0f}"],                                    
         ["-" * 40, "-" * 25],  # Separator line

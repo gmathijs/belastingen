@@ -6,14 +6,14 @@ def get_user_input():
         "opslagnaam": "belasting",
         "db_path": "mijn_belastingen.db",   # Path to the database
         "year": 2024,                       # Tax year
-        "AftrekEW": 0,                   # Aftrek eigen woning
+        "aftrek_eigenwoning": 0,                   # Aftrek eigen woning
 
         "spaargeld": 100,                   # Savings
         "belegging": 0,                     # Investments
         "ontroerend": 0,                    # Real estate
         "WOZ_Waarde": 0,                     # WOZ value of real estate
         "schuld": 0,                        # Aftrekbare schulden Box 3
-        "divident": 0,                      # Ingehouden divident belasting
+        "dividend": 0,                      # Ingehouden dividend belasting
 
 
         "primary": {
@@ -24,7 +24,7 @@ def get_user_input():
             "Pensioen": 4499,              # Pensioen of uitkering
             "deel_box1": 1,                 # Deel box1 wat persoon voor zijn rekening neemt
             "deel_box3": 1,                 # Deel box3 wat persoon voor zijn rekening neemt
-            "deel_div": 1,                  # Deel dividentbelasting wat persoon voor zijn rekening neemt 
+            "deel_div": 1,                  # Deel dividendbelasting wat persoon voor zijn rekening neemt 
             "al_ingehouden": 0,             # Ingehouden loonheffing optelsom van jaaropgaven 
             "voorlopige_aanslag": 0      # Betaalde voorlopige aanslag (+) = betaald (-) is teruggekregem 
 
@@ -39,7 +39,7 @@ def get_user_input():
             "voorlopige_aanslag": 0         # Betaalde voorlopige aanslag          
         },
         "programsetting": {
-            "mode": 2                       # 1: Normal 2: Vindt optimale verdeling
+            "programsetting_mode": 2                       # 1: Normal 2: Vindt optimale verdeling
         }
     }
     return input_data
@@ -69,7 +69,7 @@ def check_input(data):
             data["primary"]["deel_box3"] = 1.0
             data["partner"]["deel_box3"] = 0.0
 
-        # Enforce deel_box3 divident dependency
+        # Enforce deel_box3 dividend dependency
         if "deel_div" in data["primary"]:
             data["partner"]["deel_div"] = 1 - data["primary"]["deel_div"]
         else:
