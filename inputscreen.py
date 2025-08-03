@@ -7,7 +7,7 @@
 # pylint: disable=line-too-long
 # pylint: disable=missing-function-docstring
 
-# CTRL K J = unfold CTRK J = Fold
+# CTRL K J = unfold CTRL K O = Fold
 
 # Standard library
 import os
@@ -26,6 +26,8 @@ from functions_output import (format_table_all,
 from save_input import (read_input_from_csv, 
                         write_input_to_csv
                         )
+from functions_graphs_tabbed import create_tabbed_graphs
+
 class TaxInputApp:
     """
     Opent het GUI window om belasting gegevens in te vullen.
@@ -352,7 +354,6 @@ class TaxInputApp:
                 os.remove(filename)
                 filename = f"{basename}_{counter}.txt"
                 counter += 1
-
     # ------------------
     # Create Window Tabs
     # ------------------        
@@ -419,7 +420,7 @@ class TaxInputApp:
        
         # Program settings
         ttk.Label(self.general_frame, text="Program Mode:").grid(row=12, column=0, sticky=tk.W, padx=5, pady=5)
-        self.programsetting_mode = ttk.Combobox(self.general_frame, values=["Normaal", "Bereken optimale verdeling"])
+        self.programsetting_mode = ttk.Combobox(self.general_frame, values=["Normaal", "Bereken optimale verdeling","Loop salaris"])
         self.programsetting_mode.grid(row=12, column=1, padx=5, pady=5)
         self.programsetting_mode.current(0)
         
@@ -560,11 +561,21 @@ class TaxInputApp:
         if not self.primary_heeft_partner.get():
             self.notebook.select(self.primary_frame)
     # ------------------
-    # Output on Screen Handling
+    # Output and  on Screen Handling
     # ------------------
     def handle_output(self, all_results):
         """Handle output display from within the class"""
         #Format and export the Box 3 tax calculation results.
+
+        # Graph Necessary?
+        if all_results['input']['programsetting']['programsetting_mode'] ==3: 
+            # Dan is er een resultaat deel in all_results
+            print("Grafiek kan worden geplaatst")
+            # Extract data from the dictionary
+            resultaat = all_results['resultaat']
+            create_tabbed_graphs(resultaat, self.root)
+            #create_grah_income(resultaat)
+
 
         
         # Define the file name
@@ -602,9 +613,10 @@ class TaxInputApp:
         print(table_totaal)
         with open(filename, "a", encoding="utf-8") as file:
             file.write(table_totaal + "\n")
-            
-        # Show in positioned window
-        self.show_results_in_window(filename)
+
+        if all_results['input']['programsetting']['programsetting_mode'] != 3: 
+            # Show in positioned window
+            self.show_results_in_window(filename)
 
     def show_results_in_window(self, filename):
         """Display results in a window positioned on the right"""
@@ -738,7 +750,6 @@ class TaxInputApp:
         
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
-
     # ------------------
     # Validation of input
     # ------------------
@@ -791,9 +802,6 @@ class TaxInputApp:
         except ValueError:
             return False
 
-
-
-    
     def validate_number_input(self, new_value):
         """Validate that input is a number >= 0"""
         try:

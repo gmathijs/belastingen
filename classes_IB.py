@@ -174,7 +174,8 @@ class ArbeidskortingCalculator:
             raise ValueError(f"No arbeidskorting bracket found for year {year} and income {brutojaarsalaris}")
 
         arbeidskorting = relevante_schijf['base_credit'] + \
-                         relevante_schijf['credit_percentage'] * (brutojaarsalaris - relevante_schijf['lower_limit'] -1 )
+                         relevante_schijf['credit_percentage'] * \
+                         (brutojaarsalaris - relevante_schijf['lower_limit'] -1 )
 
         return round(arbeidskorting, 2)
 

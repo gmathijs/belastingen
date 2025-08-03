@@ -54,6 +54,7 @@ def format_table_all(data_in,data_out):
         ["Heffingskorting", f"€{data_out['box1']['heffingskorting']:,.0f}"],
         ["Arbeidskorting", f"€{data_out['box1']['arbeidskorting']:,.0f}"],  
         ["Ouderenkorting", f"€{data_out['box1']['ouderenkorting']:,.0f}"],
+        ["Kortingen Totaal", f"€{data_out['box1']['kortingentotaal']:,.0f}"],        
         [" ", " "],  # empty line
         ["Box1 + Box3 (inc. premies en kortingen)", f"€{data_out['box1']['TotaalInkomstenbelastingInclBox3']:,.0f}"],
         ["Ingehouden dividend uw deel", f"€{data_out['box1']['Dividend uw deel']:,.0f}"], 

@@ -1,9 +1,16 @@
 *.txt
 *.csv
+*.pyc
 /oudspul/
 /test/
 /private/
 /backup/
+bewaren/
+.vscode/
+myenv/
+.gitignore
+
+
 simplified.py
 resultaat.csv
 probeersel.py
@@ -19,3 +26,6 @@ __pycache__/functions_input.cpython-311.pyc
 __pycache__/functions_output.cpython-311.pyc
 __pycache__/save_input.cpython-311.pyc
 widget_table.numbers
+__pycache__/functions_input.cpython-311.pyc
+__pycache__/functions_input.cpython-311.pyc
+__pycache__/functions_output.cpython-311.pyc

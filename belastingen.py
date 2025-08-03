@@ -3,6 +3,12 @@
     Updated for year 2020 towards 2024
     Gaston: Last update 2025-03
 """
+# pylint: disable=missing-function-docstring
+# pylint: disable=trailing-whitespace
+# pylint: disable=line-too-long
+# pylint: disable=duplicate-key
+
+
 import csv
 import os
 import tkinter as tk
@@ -11,6 +17,22 @@ from tkinter import filedialog
 from functions_input import get_user_input, check_input
 from function_calculations import (calculate_aanslag_for_person)
 from save_input import write_input_to_csv, read_input_from_csv, validate_tax_csv
+
+def save_csv(resultaat_lijst):
+    # Intermediate output to a csv file for debugging
+    csv_file = 'resultaat.csv'
+    # Open the CSV file for writing the intermediate results
+    with open(csv_file, mode='w', newline='') as file:
+        # Extract the fieldnames (column headers) from the first dictionary
+        fieldnames = resultaat_lijst[0].keys()
+        # Create a DictWriter object
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        # Write the header row
+        writer.writeheader()
+        # Write the data rows
+        for result in resultaat_lijst:
+            writer.writerow(result)
+    print(f"Results have been written to {csv_file}")
 
 def ask_input():
     """ Routine to ask if user wants to read an input file """
@@ -86,6 +108,9 @@ def belastingen(input_data):
     1. Takes input data  (input_data)
     2. Perform calculations
     3. Return results  (all_results)
+
+    This routine is called by Class: TaxInputApp - run_calculation
+
     Routine to ask if user wants to read an input file """
     # Validate input structure
     if not isinstance(input_data, dict):
@@ -105,6 +130,7 @@ def belastingen(input_data):
     all_results ={}
     all_results ['input'] = input_data
     all_results['totaal'] = {}
+    all_results['resultaat'] = {}
     besteverdeling = False
 
     min_aanslag = float('inf')  # Start with a very high value
@@ -113,21 +139,77 @@ def belastingen(input_data):
     best_deel_div = 0
     teller = 0
     resultaat_lijst = []  # Initialize an empty list to store results
+    program_setting=1
+
+
+    if input_data['programsetting']['programsetting_mode'] ==3: 
+        # Loop over arbeidsloon
+        # Bereken belastingen over loon van €1000 tot €120000 met stappen van €1000
+        # Alle input data wordt overgenomen behalve inkomen en uitkering=0
+        program_setting=3
+
+        step = 1000
+        num_steps = 201   # Eindig op 100,0000 Euro
+        inkomen = 1000  # Start met 1000 Euro
+        # Bewaar originele invoer
+        in_inkomen =  input_data['primary']['Inkomen']
+        in_uitkering =  input_data['primary']['Pensioen']
+
+        # Zet onderdelen op nul ongeacht wat de invoer is.
+        input_data['primary']['Pensioen'] = 0
+        input_data['primary']['heeft_partner'] = False 
+
+        for inkomen in [i * step for i in range(num_steps)]:
+            input_data['primary']['Inkomen'] = inkomen
+            # Bereken eersteen enige persoon
+            all_results['primary']= calculate_aanslag_for_person(input_data, input_data['primary'])
+            inkomenwerkwoning  = 1
+            aanslag = 0
+            loonheffing_excl = 1 
+            loonheffing =1
+            kortingen = 1   
+
+            # Haal de meest insteressante gegevens eruit
+            inkomenwerkwoning  = all_results['primary'] ['box1a'] ['InkomenWerkenWoning']   # Inkomen
+            aanslag = all_results  ['primary']['Nieuw_bedrag_aanslag']                      # Aanslag
+            loonheffing_excl = all_results['primary'] ['box1'] ['loonheffing_excl']         # Loonheffing    
+            loonheffing = all_results ['primary']['box1'] ['Nieuw_bedrag_aanslag']          # 
+            kortingen = all_results['primary'] ['box1'] ['kortingentotaal']   
+            heffingskorting =  all_results['primary'] ['box1'] ['heffingskorting']   
+            arbeidskorting =  all_results['primary'] ['box1'] ['arbeidskorting']  
+            ouderenkorting = all_results['primary'] ['box1'] ['ouderenkorting']             
+            premiesvolksverz =   all_results['primary'] ['premies'] ['totale_premie']       # Klopt
+
+
+            resultaat = {
+                'teller': teller,
+                'inkomen_arbeid': f"€{inkomen:,.0f}",
+                'inkomen_werkwoning': f"€{inkomenwerkwoning:,.0f}",                
+                'box1_loonheffing': f"€{loonheffing_excl:,.0f}",   
+                'premies_volksverz': f"€{premiesvolksverz:,.0f}",  
+                'kortingentotaal': f"€{kortingen:,.0f}",     
+                'totale_aanslag': f"€{loonheffing:,.0f}", 
+                'heffingskorting':  f"€{heffingskorting:,.0f}",
+                'arbeidskorting':  f"€{arbeidskorting:,.0f}",
+                'ouderenkorting':  f"€{ouderenkorting:,.0f}",
+                'aanslag': f"€{aanslag:,.0f}",
+              #  'Totale aanslag': f"€{aanslag:,.0f}",
+            }
+
+            # Append the dictionary to the list
+            resultaat_lijst.append(resultaat)
+            teller += 1
+            #print(f"{teller} : Teller:{teller:,.0f}  Inkomen:{inkomen:,.0f} WerkWoning:{inkomenwerkwoning:,.0f}  loonheffing:{loonheffing:,.0f}  ")
+        save_csv(resultaat_lijst)
+        # Zet input terug naar origineel
+        input_data['primary']['Inkomen'] = in_inkomen
+        input_data['primary']['Pensioen'] = in_uitkering
+        all_results['resultaat'] = resultaat_lijst
+
 
     if input_data['primary']['heeft_partner'] and input_data['programsetting']['programsetting_mode'] ==2: 
+        program_setting=2
         besteverdeling = True
-
-        """        for step in [0.1, 0.05, 0.01]:
-            num_steps = int(1 / step) + 1
-            print(f"\nStep size: {step} ({num_steps} steps)")
-            for val in [i * step for i in range(num_steps)]:
-                print(round(val, 2), end=" ")
-
-        step = 0.1      # Make sure to check if the step size is divisible by 1
-                        # steps smaller then 0.05 must be avoide due to calculation time
-        assert (1 % step) == 0, f"Step {step} must divide 1 without remainder!"
-
-        num_steps = int(1 / step) + 1"""
 
         step=0.1
         num_steps=11
@@ -156,7 +238,7 @@ def belastingen(input_data):
                         aanslag = all_results ['primary'] ['Nieuw_bedrag_aanslag'] + all_results ['partner'] ['Nieuw_bedrag_aanslag']
 
                     # Check if the current aanslag is the lowest so far
-                                # Store results in a dictionary
+                    # Store results in a dictionary
                     resultaat = {
                         'teller': teller,
                         'aanslag': f"€{aanslag:,.0f}",
@@ -167,6 +249,7 @@ def belastingen(input_data):
 
                     # Append the dictionary to the list
                     resultaat_lijst.append(resultaat)
+
                     
                     teller += 1
                     print(f"{teller} : aanslag :  €{aanslag:,.0f}  box1:{deel_box1:,.2f}    box3:{deel_box3:,.2f}    div: {deel_div:,.2f}  ")
@@ -181,21 +264,8 @@ def belastingen(input_data):
         print(f"Eind resultaat min aanslag :  €{min_aanslag:,.0f}  voor box1 {best_deel_box1} voor box3 {best_deel_box3}  voor div {best_deel_div}    ")
         # Define the CSV file name
 
-
-        # Intermediate output to a csv file for debugging
-        csv_file = 'resultaat.csv'
-        # Open the CSV file for writing the intermediate results
-        with open(csv_file, mode='w', newline='') as file:
-            # Extract the fieldnames (column headers) from the first dictionary
-            fieldnames = resultaat_lijst[0].keys()
-            # Create a DictWriter object
-            writer = csv.DictWriter(file, fieldnames=fieldnames)
-            # Write the header row
-            writer.writeheader()
-            # Write the data rows
-            for result in resultaat_lijst:
-                writer.writerow(result)
-        print(f"Results have been written to {csv_file}")
+        save_csv(resultaat_lijst)
+        all_results['resultaat'] = resultaat
 
         # Zet de meest gunstige combinatie klaar 
         input_data['primary']['deel_box1'] = best_deel_box1
