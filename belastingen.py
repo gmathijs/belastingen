@@ -139,7 +139,7 @@ def belastingen(input_data):
     best_deel_div = 0
     teller = 0
     resultaat_lijst = []  # Initialize an empty list to store results
-    program_setting=1
+    program_setting = 1
 
 
     if input_data['programsetting']['programsetting_mode'] ==3: 
@@ -149,7 +149,7 @@ def belastingen(input_data):
         program_setting=3
 
         step = 1000
-        num_steps = 201   # Eindig op 100,0000 Euro
+        num_steps = 121   # Eindig op 120,0000 Euro
         inkomen = 1000  # Start met 1000 Euro
         # Bewaar originele invoer
         in_inkomen =  input_data['primary']['Inkomen']
@@ -161,7 +161,7 @@ def belastingen(input_data):
 
         for inkomen in [i * step for i in range(num_steps)]:
             input_data['primary']['Inkomen'] = inkomen
-            # Bereken eersteen enige persoon
+            # Bereken eerst een enige persoon
             all_results['primary']= calculate_aanslag_for_person(input_data, input_data['primary'])
             inkomenwerkwoning  = 1
             aanslag = 0

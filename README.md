@@ -41,13 +41,23 @@ deel_box1  voor aftrek schulden eigen woning
 deel_box3  voor het deel dat je voor rekening neemt in box3
 deel_div  voor het deel dat je eventuele dividend belasting voor je rekening neemt.
 
-Als bij general program settings normal invoert rekent het programma met de opgegeven verdeling. Wanneer je kiest voor beste verdeling. Gaat het programma
-de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div
-Het geheel wordt met stapjes van 0.5 van 0-1.0 doorgerekent dus 21^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
-Aangezien het ±9300 berekeningen zijn duurt het ff (bij mij 30 s). Ga niet kleiner dan 0.05 want dan ben je wel ff onderweg.
+# Brekenings Modus: Normal (1) vs Beste Verdeling (2) vs Loop Salaris(3) (zie belastingen.py)
+Program Setting Mode 1:
+Als bij general program settings normal invoert rekent het programma met de opgegeven verdeling. 
+
+Program Setting Mode 2:
+Wanneer je kiest voor beste verdeling. Gaat het programma de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div
+Het geheel wordt met stapjes van 0.1 van 0-1.0 doorgerekent, voor ieder deel dus 10^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
+Aangezien het een flink aantal berekeningen zijn duurt het ff (bij mij 30 s). G
 
 Als je geen partner hebt worden alle parameters op 1 gezet en wordt het zoeken naar de beste verdeling overgeslagen.
 
+Program Setting Mode 3:
+Gerbuik: dus gewoon deze modus kiezen en op calculate drukken 
+Ik was even vergeten dat ik deze er ingezet had. Meer ter controle van de database en nog niet perfect zie ik nu.
+Deze modus loopt met stapjes van 1000 euro richting de 120000 (geen partner en geen AOW ongeacht input)
+En creert een tabbed graph om te zien of de data redelijk consistent zijn. 
+Dit is wel nuttig dus ik ga hier binnenkort nog wat tijd aan besteden en uitbreiden.
 
 # To-Do 
 Is het compleet? Nee vast niet, maar bij mijn opgaven inclusief partner ging het binnen €10 goed.

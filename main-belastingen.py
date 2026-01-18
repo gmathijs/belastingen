@@ -282,7 +282,6 @@ class TaxInputApp:
             messagebox.showerror("Error", f"Failed to populate fields:\n{str(e)}")
             raise
 
-
     def start_calculation(self):
         """Start the tax calculation process"""
         if not self.calculating:
