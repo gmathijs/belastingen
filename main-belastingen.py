@@ -8,7 +8,7 @@
 # pylint: disable=missing-function-docstring
 
 # CMD K J = unfold CMD K O = Fold
-
+# CMD K X = Fold all
 # Standard library
 import os
 import threading
