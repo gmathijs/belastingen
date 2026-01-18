@@ -15,7 +15,8 @@ De belangrijkste dingen staan nu in classes
 7: class OuderenKorting
 8: class TariefAanpassingEigenWoning
 
-Alle getalletjes staan in eenSQLite dabase mijn_belastingen.db die je eenvoudig kunt aanmaken met create_tax_database.py. getallen staan erin vanaf 2020 t/m 2024. De getallen staan in diverse tabellen nl:
+Alle getalletjes staan in eenSQLite dabase mijn_belastingen.db die je eenvoudig kunt aanmaken met create_tax_database.py. getallen staan erin vanaf 2020 t/m 2025. 2026 is voorbereid als kopie van 2025. 
+De getallen staan in diverse tabellen nl:
 - tax_loonheffing
 - tax_heffingskorting
 - tax_arbeidskorting
@@ -60,7 +61,6 @@ Ben er nog niet echt tevreden mee maar het schijnt te werken.
 
 Ieder opbouwend commentaar is uiteraard welkom. 
 
-Voor 2024 heeft het mij weer geholpem.! 
 
 
 
