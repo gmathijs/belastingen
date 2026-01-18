@@ -31,7 +31,7 @@ AOW zit erin zowel voor en na 1946. Krijg je midden in het jaar AOW; die bereken
 Box2 zit er (nog) niet bij 
 
 # Hoe gebruik je het:
-Start het programma op met inputscreen.py. Er opent zich een GUI screen aan de linkerkant van het scherm.
+Start het programma op met main-belastingen.py. Er opent zich een GUI screen aan de linkerkant van het scherm.
 Dit scherm bevat 3 tabs General, Primary en Partner.
 Vul de benodigde invoer in en druk op calculate
 
@@ -43,7 +43,7 @@ deel_div  voor het deel dat je eventuele dividend belasting voor je rekening nee
 Als bij general program settings normal invoert rekent het programma met de opgegeven verdeling. Wanneer je kiest voor beste verdeling. Gaat het programma
 de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div
 Het geheel wordt met stapjes van 0.5 van 0-1.0 doorgerekent dus 21^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
-Aangezien het ±9300 berekeningen zijn duurt het ff (bij mij 30 s). Ga niet kleiner dan 0.5 want dan ben je wel ff onderweg.
+Aangezien het ±9300 berekeningen zijn duurt het ff (bij mij 30 s). Ga niet kleiner dan 0.05 want dan ben je wel ff onderweg.
 
 Als je geen partner hebt worden alle parameters op 1 gezet en wordt het zoeken naar de beste verdeling overgeslagen.
 

@@ -1,3 +1,10 @@
+"""
+Module om de database te maken. Deze kan op ieder gewenst moment worden gebruikt
+om de database te overschrijven met de meest recente gegevens.
+"""
+
+
+
 import sqlite3
 
 # Connect to the SQLite database (or create it if it doesn't exist)
@@ -180,11 +187,11 @@ tax_loonheffing_data = [
     (2022, 2, 69399, 999999, 0.4950, 0),
 
     (2022, 1,     0,  35472, 0.1902, 1),
-    (2022, 2, 35473,  69398, 0.3707, 1),   
+    (2022, 2, 35473,  69398, 0.3707, 1),
     (2022, 3, 69399, 999999, 0.4950, 1),
 
     (2022, 1,     0,  36409, 0.1902, 2),
-    (2022, 2, 36410,  69398, 0.3707, 2),   
+    (2022, 2, 36410,  69398, 0.3707, 2),
     (2022, 3, 69399, 999999, 0.4950, 2),
 
     # 2023
@@ -200,12 +207,12 @@ tax_loonheffing_data = [
     (2023, 3, 73031, 999999, 0.4950,  2),
 
     #2024  Niet in de AOW
-    (2024, 1,     0,   75517, 0.3697, 0),
+    (2024, 1,     0,   75518, 0.3697, 0),
     (2024, 2, 75518, 9999999, 0.4950, 0),
 
     #2024 AOW After 1 januari 1946
     (2024, 1,     0,   38098, 0.1907,  1),
-    (2024, 2, 38098,   75517, 0.3697,  1),
+    (2024, 2, 38098,   75518, 0.3697,  1),
     (2024, 3, 75518, 9999999, 0.4950,  1),
 
     #2024 AOW before 1 januari 1946
@@ -213,22 +220,44 @@ tax_loonheffing_data = [
     (2024, 2, 40021,   75518,   0.3697, 2),  
     (2024, 3, 75518, 9999999,   0.4950, 2),
 
-    # Bron: Bijlage bij de Nieuwsbrief Loonheffingen 2025
-    # 12 December 2024
-    #2024  Niet in de AOW
+    # Bron: Handboek Loonheffingen 2025
+    # Versie oktober 2025
+    # Updated 2026-01-08
+
+    #2025  Niet in de AOW
     (2025, 1,     0,   38441, 0.3582, 0),
     (2025, 2, 38441,   76817, 0.3748, 0),
     (2025, 3, 76817, 9999999, 0.4950, 0),
 
-    #2024 AOW After 1 januari 1946
+    #2025 AOW After 1 januari 1946
     (2025, 1,     0,   38441, 0.1792,  1),
     (2025, 2, 38441,   76817, 0.3748,  1),
     (2025, 3, 76817, 9999999, 0.4950,  1),
 
-    #2024 AOW before 1 januari 1946
+    #2025 AOW before 1 januari 1946
     (2025, 1,     0,   40502,   0.1792, 2),
     (2025, 2, 40502,   76817,   0.3748, 2),
-    (2025, 3, 76817, 9999999,   0.4950, 2)
+    (2025, 3, 76817, 9999999,   0.4950, 2),
+
+    # Bron:
+    # Versie
+    # Updated
+    # Kopie 2025 nog vullen
+
+    #2026  Niet in de AOW
+    (2026, 1,     0,   38441, 0.3582, 0),
+    (2026, 2, 38441,   76817, 0.3748, 0),
+    (2026, 3, 76817, 9999999, 0.4950, 0),
+
+    #2026 AOW After 1 januari 1946
+    (2026, 1,     0,   38441, 0.1792,  1),
+    (2026, 2, 38441,   76817, 0.3748,  1),
+    (2026, 3, 76817, 9999999, 0.4950,  1),
+
+    #2026 AOW before 1 januari 1946
+    (2026, 1,     0,   40502,   0.1792, 2),
+    (2026, 2, 40502,   76817,   0.3748, 2),
+    (2026, 3, 76817, 9999999,   0.4950, 2)
 
 ]
 
@@ -295,7 +324,7 @@ tax_heffingskorting_data = [
     (2024, 2, 24813,    75518, 1735, -0.03421,  1),
     (2024, 3, 75518, 99999999,    0,        0,  1),
 
-    # 2025 Bron: Zie loonhefing eerste tabel
+    # 2025 Bron:     # Updated 2026-01-08
     (2025, 1,     0,    28406, 3068,        0,  0),
     (2025, 2, 28406,    76817, 3068, -0.06337,  0),
     (2025, 3, 76817, 99999999,    0,        0,  0),
@@ -303,7 +332,17 @@ tax_heffingskorting_data = [
     # 2025 AOW Leeftijd
     (2025, 1,     0,    28406, 1536,        0,  1),
     (2025, 2, 28406,    76817, 1536, -0.03170,  1),
-    (2025, 3, 76817, 99999999,    0,        0,  1)
+    (2025, 3, 76817, 99999999,    0,        0,  1),
+
+    # 2026 Bron:     # nog vullen
+    (2026, 1,     0,    28406, 3068,        0,  0),
+    (2026, 2, 28406,    76817, 3068, -0.06337,  0),
+    (2026, 3, 76817, 99999999,    0,        0,  0),
+
+    # 2026
+    (2026, 1,     0,    28406, 1536,        0,  1),
+    (2026, 2, 28406,    76817, 1536, -0.03170,  1),
+    (2026, 3, 76817, 99999999,    0,        0,  1)
 ]
 
 cursor.executemany("""
@@ -324,7 +363,7 @@ tax_arbeidskorting_data = [
     (2019, 2,   9694,     20940,   88,  0.14689, 1),
     (2019, 3,  20940,     34060, 1740,        0, 1),
     (2019, 4,  34060,     90710, 1740, -0.03069, 1),
-    (2019, 5,  90711, 999999999,    0,        0, 1),    
+    (2019, 5,  90711, 999999999,    0,        0, 1),
 
     # 2020
     (2020, 1,      0,      9921,    0,  0.02812, 0),
@@ -392,7 +431,8 @@ tax_arbeidskorting_data = [
     (2024, 4,  39958,    124935, 2854,  -0.03358, 1),
     (2024, 5, 124935, 999999999,    0,         0, 1),
 
-    # 2025 bron zie loonheffing eerste tabel
+    # 2025 bron # Updated 2026-01-08
+    # AFbouw (-) Opbouw(+)
     (2025, 1,      0,     12169,   0 ,   0.08053, 0),
     (2025, 2,  12169,     26288,  980,    0.3030, 0),
     (2025, 3,  26288,     43071, 5220,   0.02258, 0),
@@ -401,10 +441,26 @@ tax_arbeidskorting_data = [
 
     #2025 AOW
     (2025, 1,      0,     12169,   0 ,   0.04029, 1),
-    (2025, 2,  12169,     26288,  491,   0.15023, 1),
-    (2025, 3,  26288,     43071, 2612,   0.01130, 1),
-    (2025, 4,  43071,    129078, 2802,  -0.03257, 1),
-    (2025, 5, 129078, 999999999,    0,         0, 1)
+    (2025, 2,  12169,     26288,  501,   0.15023, 1),
+    (2025, 3,  26288,     43071, 3163,   0.01130, 1),
+    (2025, 4,  43071,    129078, 2854,  -0.03257, 1),
+    (2025, 5, 129078, 999999999,    0,         0, 1),
+
+    # 2026 bron: Kopie 2025 Nog Vullen
+    # AFbouw (-) Opbouw(+)
+    (2026, 1,      0,     12169,   0 ,   0.08053, 0),
+    (2026, 2,  12169,     26288,  980,    0.3030, 0),
+    (2026, 3,  26288,     43071, 5220,   0.02258, 0),
+    (2026, 4,  43071,    129078, 5599,  -0.06510, 0),
+    (2026, 5, 129078, 999999999,    0,         0, 0),
+
+    #2026 AOW
+    (2026, 1,      0,     12169,   0 ,   0.04029, 1),
+    (2026, 2,  12169,     26288,  501,   0.15023, 1),
+    (2026, 3,  26288,     43071, 3163,   0.01130, 1),
+    (2026, 4,  43071,    129078, 2854,  -0.03257, 1),
+    (2026, 5, 129078, 999999999,    0,         0, 1)
+
 
 ]
 
@@ -415,11 +471,17 @@ cursor.executemany("""
 
 
 # Insert data into the tax_premies_volksverzekeringen table
+# Bron: Handboek Loonheffingen 2025 updated 2026-01-08
 tax_premies_volksverzekeringen = [
+    # 2026  Kopie 2025 nog vullen
+    (2026, 17.9, 0.1, 9.65, 38441, 0), #
+    (2026,    0, 0.1, 9.65, 38441, 1), # AOW leeftijd
+    (2026,    0, 0.1, 9.65, 40502, 2), # AOW geboren voor 1 jan 1946
+
     # 2025
-    (2025, 17.9, 0.1, 9.65, 38441, 0),
-    (2025,    0, 0.1, 9.65, 38441, 1),
-    (2025,    0, 0.1, 9.65, 38441, 2),
+    (2025, 17.9, 0.1, 9.65, 38441, 0), #
+    (2025,    0, 0.1, 9.65, 38441, 1), # AOW leeftijd
+    (2025,    0, 0.1, 9.65, 40502, 2), # AOW geboren voor 1 jan 1946
     # 2024
     (2024, 17.9, 0.1, 9.65, 38098, 0),
     (2024,    0, 0.1, 9.65, 38098, 1),
@@ -438,30 +500,13 @@ tax_premies_volksverzekeringen = [
     (2021,    0, 0.1, 9.65, 35129, 2)
 ]
 
-cursor.executemany("""
-    INSERT INTO tax_premies_volksverzekeringen (year, aow_tarief, anw_tarief, wlz_tarief, maximaal_inkomen, aow_age)
-    VALUES (?, ?, ?, ?, ?, ?)
-""", tax_premies_volksverzekeringen)
 
-# Dit is oude zooi.
-tax_vermogensbelasting_data = [
-    (2023, 'banktegoed', 0, 50000, 0.02),
-    (2023, 'banktegoed', 50001, 100000, 0.03),
-    (2023, 'beleggingen', 0, 50000, 0.04),
-    (2023, 'beleggingen', 50001, 100000, 0.05),
-    (2023, 'ontroerendgoed', 0, 50000, 0.06),
-    (2023, 'ontroerendgoed', 50001, 100000, 0.07)
-]
-
-cursor.executemany("""
-    INSERT INTO tax_vermogensbelasting (year, asset_type, lower_limit, upper_limit, tax_rate)
-    VALUES (?, ?, ?, ?, ?)
-""", tax_vermogensbelasting_data)
 
 # Insert data into the tax_box3 table
 tax_box3_data = [
     # Year, perc_spaargeld, perc_belegging, perc_schuld, perc_box3, heffingsvrij_vermogen,
     # drempel_schuld
+    (2026, 0.0144, 0.0574, 0.0263, 0.36, 58272,  3700),  # Kopie 2025 nog vullen
     (2025, 0.0144, 0.0588, 0.0262, 0.36, 57684,  3700),
     (2024, 0.0144, 0.0604, 0.0261, 0.36, 57000,  3700),
     (2023, 0.0092, 0.0617, 0.0246, 0.32, 57000,  3400),
@@ -482,6 +527,14 @@ cursor.executemany("""
 
 # Insert data into the tbl_eigenwoningforfait table
 tbl_eigenwoning =[
+    #2026 Kopie 2025 nog vullen
+    (2026, 1,    12500,   0.000,    0),
+    (2026, 2,    25000,   0.001,    0),
+    (2026, 3,    50000,   0.002,    0),
+    (2026, 4,    75000,  0.0025,    0),
+    (2026, 5,  1330000,  0.0035,    0),
+    (2026, 6, 99000000, 0.00235, 4725),
+
     #2025
     (2025, 1,    12500,   0.000,    0),
     (2025, 2,    25000,   0.001,    0),
@@ -527,8 +580,6 @@ tbl_eigenwoning =[
 ]
 
 
-
-
 cursor.executemany("""
     INSERT INTO tbl_eigenwoningforfait(year, schijf_no, limit_WOZ, percentage, bedrag)
     VALUES (?, ?, ?, ?, ? )
@@ -536,6 +587,11 @@ cursor.executemany("""
 
 # Insert data into the tbl_eigenwoningforfait table
 tbl_ouderenkorting =[
+    #2026 Kopie 2025 nog vullen
+    (2026, 1,        0,   46002,  2067,   0),
+    (2026, 2,    46002,   59782,  2067, .15),
+    (2026, 3,    59782,99999999,     0,   0),
+
     #2025
     (2025, 1,        0,   45308,  2035,   0),
     (2025, 2,    45308,   58875,  2035, .15),
@@ -560,7 +616,6 @@ tbl_ouderenkorting =[
     (2021, 1,        0,   37971,  1703,   0),
     (2021, 2,    37971,   49324,  1703, .15),
     (2021, 3,    49324,99999999,     0,   0)
-
 ]
 
 cursor.executemany("""
@@ -570,6 +625,8 @@ cursor.executemany("""
 
 # Insert data into the tbl_tarief_aanpassing table
 tbl_tarief_aanpassing =[
+    
+    (2026, 76817, 0.1201),  #2026 Kopie 2025 nog vullen
     (2025, 76817, 0.1201),  #Door de aanpassing krijgt u in 2025 over al uw aftrekposten in de hoogste belastingschijf maximaal 37,48% belasting 
     (2024, 75518, 0.1253),  # 36.97%
     (2023, 73031, 0.1257),  # 36.93%
@@ -583,7 +640,25 @@ cursor.executemany("""
     VALUES (?, ?, ?)
 """, tbl_tarief_aanpassing)
 
+cursor.executemany("""
+    INSERT INTO tax_premies_volksverzekeringen (year, aow_tarief, anw_tarief, wlz_tarief, maximaal_inkomen, aow_age)
+    VALUES (?, ?, ?, ?, ?, ?)
+""", tax_premies_volksverzekeringen)
 
+# Dit is oude zooi.
+tax_vermogensbelasting_data = [
+    (2023, 'banktegoed', 0, 50000, 0.02),
+    (2023, 'banktegoed', 50001, 100000, 0.03),
+    (2023, 'beleggingen', 0, 50000, 0.04),
+    (2023, 'beleggingen', 50001, 100000, 0.05),
+    (2023, 'ontroerendgoed', 0, 50000, 0.06),
+    (2023, 'ontroerendgoed', 50001, 100000, 0.07)
+]
+
+cursor.executemany("""
+    INSERT INTO tax_vermogensbelasting (year, asset_type, lower_limit, upper_limit, tax_rate)
+    VALUES (?, ?, ?, ?, ?)
+""", tax_vermogensbelasting_data)
 
 # Commit the changes
 conn.commit()

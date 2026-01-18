@@ -49,8 +49,8 @@ def format_table_all(data_in,data_out):
         ["Inkomsten Belasting Box1", f"€{data_out['box1']['loonheffing_excl']:,.0f}"],
         ["Inkomsten Belasting Box3", f"€{data_out['box3']['BOX 3 BELASTING']:,.0f}"], 
         ["Totaal Inkomsten Belasting", f"€{data_out['box1']['TotaalInkomstenbelasting']:,.0f}"],  
+        ["Premies Volksverz. Totaal ", f"€{data_out['premies']['totale_premie']:,.0f}"],     
         [" ", " "],  # empty line                
-        ["Premies Volksverz. Totaal ", f"€{data_out['premies']['totale_premie']:,.0f}"],
         ["Heffingskorting", f"€{data_out['box1']['heffingskorting']:,.0f}"],
         ["Arbeidskorting", f"€{data_out['box1']['arbeidskorting']:,.0f}"],  
         ["Ouderenkorting", f"€{data_out['box1']['ouderenkorting']:,.0f}"],

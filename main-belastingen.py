@@ -7,7 +7,7 @@
 # pylint: disable=line-too-long
 # pylint: disable=missing-function-docstring
 
-# CTRL K J = unfold CTRL K O = Fold
+# CMD K J = unfold CMD K O = Fold
 
 # Standard library
 import os
@@ -371,7 +371,7 @@ class TaxInputApp:
         self.opslagnaam.insert(0, self.filename)
             
         ttk.Label(self.general_frame, text="Belasting Jaar:").grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        self.year = ttk.Combobox(self.general_frame, values=["2024", "2023", "2022","2021","2020"])
+        self.year = ttk.Combobox(self.general_frame, values=["2026", "2025", "2024", "2023", "2022", "2021", "2020"])
         #self.year = ttk.Entry(self.general_frame)
         self.year.grid(row=3, column=1, padx=5, pady=5)
         self.year.current(0)
