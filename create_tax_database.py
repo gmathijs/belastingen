@@ -140,8 +140,26 @@ cursor.execute("""
     )
 """)
 
-# Insert data into the tax_loonheffing table (example for 2023)
+# Insert data into the tax_loonheffing table 
 tax_loonheffing_data = [
+    # Bron: Tarieven, bedragen en percentages loonheffingen vanaf 1 januari 2026
+    # Versie: Uitgave 2 19 Januari 2026
+
+    #2026  Niet in de AOW
+    (2026, 1,     0,   38883, 0.3575, 0),
+    (2026, 2, 38883,   78426, 0.3756, 0),
+    (2026, 3, 78426, 9999999, 0.4950, 0),
+
+    #2026 AOW After 1 januari 1946
+    (2026, 1,     0,   38883, 0.1785,  1),
+    (2026, 2, 38883,   78426, 0.3756,  1),
+    (2026, 3, 78426, 9999999, 0.4950,  1),
+
+    #2026 AOW before 1 januari 1946
+    (2026, 1,     0,   41123,   0.1785, 2),
+    (2026, 2, 41123,   78426,   0.3756, 2),
+    (2026, 3, 78426, 9999999,   0.4950, 2),
+
     # 2019 drie schalen
     (2019, 1,     0,  20384, 0.3665,  0),
     (2019, 2, 20385,  68507, 0.3810,  0),
@@ -237,27 +255,9 @@ tax_loonheffing_data = [
     #2025 AOW before 1 januari 1946
     (2025, 1,     0,   40502,   0.1792, 2),
     (2025, 2, 40502,   76817,   0.3748, 2),
-    (2025, 3, 76817, 9999999,   0.4950, 2),
+    (2025, 3, 76817, 9999999,   0.4950, 2)
 
-    # Bron:
-    # Versie
-    # Updated
-    # Kopie 2025 nog vullen
 
-    #2026  Niet in de AOW
-    (2026, 1,     0,   38441, 0.3582, 0),
-    (2026, 2, 38441,   76817, 0.3748, 0),
-    (2026, 3, 76817, 9999999, 0.4950, 0),
-
-    #2026 AOW After 1 januari 1946
-    (2026, 1,     0,   38441, 0.1792,  1),
-    (2026, 2, 38441,   76817, 0.3748,  1),
-    (2026, 3, 76817, 9999999, 0.4950,  1),
-
-    #2026 AOW before 1 januari 1946
-    (2026, 1,     0,   40502,   0.1792, 2),
-    (2026, 2, 40502,   76817,   0.3748, 2),
-    (2026, 3, 76817, 9999999,   0.4950, 2)
 
 ]
 
@@ -268,6 +268,18 @@ cursor.executemany("""
 
 # Insert data into the tax_heffingskorting table (example for 2023)
 tax_heffingskorting_data = [
+    # 2026 Bron:
+    # Bron: Tarieven, bedragen en percentages loonheffingen vanaf 1 januari 2026
+    # Versie: Uitgave 2 19 Januari 2026
+    (2026, 1,     0,    29736, 3115,        0,  0),
+    (2026, 2, 29736,    78426, 3115, -0.06398,  0),
+    (2026, 3, 78426, 99999999,    0,        0,  0),
+
+    # 2026 AOW Leeftijd
+    (2026, 1,     0,    29736, 1556,        0,  1),
+    (2026, 2, 29736,    78426, 1556, -0.03195,  1),
+    (2026, 3, 78426, 99999999,    0,        0,  1),
+
     # 2019
     (2019, 1,     0,    20384, 2477,        0, 0),
     (2019, 2, 20384,    68507, 2477, -0.05147, 0),
@@ -332,17 +344,9 @@ tax_heffingskorting_data = [
     # 2025 AOW Leeftijd
     (2025, 1,     0,    28406, 1536,        0,  1),
     (2025, 2, 28406,    76817, 1536, -0.03170,  1),
-    (2025, 3, 76817, 99999999,    0,        0,  1),
+    (2025, 3, 76817, 99999999,    0,        0,  1)
 
-    # 2026 Bron:     # nog vullen
-    (2026, 1,     0,    28406, 3068,        0,  0),
-    (2026, 2, 28406,    76817, 3068, -0.06337,  0),
-    (2026, 3, 76817, 99999999,    0,        0,  0),
 
-    # 2026
-    (2026, 1,     0,    28406, 1536,        0,  1),
-    (2026, 2, 28406,    76817, 1536, -0.03170,  1),
-    (2026, 3, 76817, 99999999,    0,        0,  1)
 ]
 
 cursor.executemany("""
@@ -352,6 +356,23 @@ cursor.executemany("""
 
 # Insert data into the tax_arbeidskorting table (2019–2023)
 tax_arbeidskorting_data = [
+    # 2026
+    # Bron: Tarieven, bedragen en percentages loonheffingen vanaf 1 januari 2026
+    # Versie: Uitgave 2 19 Januari 2026
+    # AFbouw (-) Opbouw(+)
+    (2026, 1,      0,     11965,   0 ,   0.08324, 0),
+    (2026, 2,  11965,     25845,  996,   0.31009, 0),
+    (2026, 3,  25845,     45592, 4304,   0.01950, 0),
+    (2026, 4,  45592,    132920, 5685,  -0.06510, 0),
+    (2026, 5, 132920, 999999999,    0,         0, 0),
+
+    #2026 AOW
+    (2026, 1,      0,     11965,   0 ,   0.04156, 1),
+    (2026, 2,  11965,     25845,  498,   0.15483, 1),
+    (2026, 3,  25845,     45592, 2149,   0.00974, 1),
+    (2026, 4,  45592,    132920, 2840,  -0.03250, 1),
+    (2026, 5, 132920, 999999999,    0,         0, 1),
+
     # 2019
     (2019, 1,      0,      9694,    0,  0.01754, 0),
     (2019, 2,   9694,     20940,  170,  0.28712, 0),
@@ -444,22 +465,9 @@ tax_arbeidskorting_data = [
     (2025, 2,  12169,     26288,  501,   0.15023, 1),
     (2025, 3,  26288,     43071, 3163,   0.01130, 1),
     (2025, 4,  43071,    129078, 2854,  -0.03257, 1),
-    (2025, 5, 129078, 999999999,    0,         0, 1),
+    (2025, 5, 129078, 999999999,    0,         0, 1)
 
-    # 2026 bron: Kopie 2025 Nog Vullen
-    # AFbouw (-) Opbouw(+)
-    (2026, 1,      0,     12169,   0 ,   0.08053, 0),
-    (2026, 2,  12169,     26288,  980,    0.3030, 0),
-    (2026, 3,  26288,     43071, 5220,   0.02258, 0),
-    (2026, 4,  43071,    129078, 5599,  -0.06510, 0),
-    (2026, 5, 129078, 999999999,    0,         0, 0),
 
-    #2026 AOW
-    (2026, 1,      0,     12169,   0 ,   0.04029, 1),
-    (2026, 2,  12169,     26288,  501,   0.15023, 1),
-    (2026, 3,  26288,     43071, 3163,   0.01130, 1),
-    (2026, 4,  43071,    129078, 2854,  -0.03257, 1),
-    (2026, 5, 129078, 999999999,    0,         0, 1)
 
 
 ]
@@ -473,10 +481,10 @@ cursor.executemany("""
 # Insert data into the tax_premies_volksverzekeringen table
 # Bron: Handboek Loonheffingen 2025 updated 2026-01-08
 tax_premies_volksverzekeringen = [
-    # 2026  Kopie 2025 nog vullen
-    (2026, 17.9, 0.1, 9.65, 38441, 0), #
-    (2026,    0, 0.1, 9.65, 38441, 1), # AOW leeftijd
-    (2026,    0, 0.1, 9.65, 40502, 2), # AOW geboren voor 1 jan 1946
+    # 2026  percentages onveranderd alleen de grensbedragen aangepast
+    (2026, 17.9, 0.1, 9.65, 38883, 0), #
+    (2026,    0, 0.1, 9.65, 38883, 1), # AOW leeftijd
+    (2026,    0, 0.1, 9.65, 41123, 2), # AOW geboren voor 1 jan 1946
 
     # 2025
     (2025, 17.9, 0.1, 9.65, 38441, 0), #
@@ -506,8 +514,8 @@ tax_premies_volksverzekeringen = [
 tax_box3_data = [
     # Year, perc_spaargeld, perc_belegging, perc_schuld, perc_box3, heffingsvrij_vermogen,
     # drempel_schuld
-    (2026, 0.0144, 0.0574, 0.0263, 0.36, 58272,  3700),  # Kopie 2025 nog vullen
-    (2025, 0.0144, 0.0588, 0.0262, 0.36, 57684,  3700),
+    (2026, 0.0128, 0.0600, 0.0270, 0.36, 59357,  3800),  # 2026 Website beloastingdienst
+    (2025, 0.0144, 0.0588, 0.0262, 0.36, 57684,  3800),
     (2024, 0.0144, 0.0604, 0.0261, 0.36, 57000,  3700),
     (2023, 0.0092, 0.0617, 0.0246, 0.32, 57000,  3400),
     (2022, 0.0000, 0.0553, 0.0228, 0.31, 50650,  3200),
@@ -527,12 +535,12 @@ cursor.executemany("""
 
 # Insert data into the tbl_eigenwoningforfait table
 tbl_eigenwoning =[
-    #2026 Kopie 2025 nog vullen
+    #2026 Bron website belastingdienst
     (2026, 1,    12500,   0.000,    0),
     (2026, 2,    25000,   0.001,    0),
     (2026, 3,    50000,   0.002,    0),
     (2026, 4,    75000,  0.0025,    0),
-    (2026, 5,  1330000,  0.0035,    0),
+    (2026, 5,  1350000,  0.0035,    0),
     (2026, 6, 99000000, 0.00235, 4725),
 
     #2025
@@ -626,8 +634,9 @@ cursor.executemany("""
 # Insert data into the tbl_tarief_aanpassing table
 tbl_tarief_aanpassing =[
     
-    (2026, 76817, 0.1201),  #2026 Kopie 2025 nog vullen
-    (2025, 76817, 0.1201),  #Door de aanpassing krijgt u in 2025 over al uw aftrekposten in de hoogste belastingschijf maximaal 37,48% belasting 
+    (2026, 76817, 0.1202),  #2026 Kopie 2025 20-01 Nog niet op website belastngdienst
+    (2025, 76817, 0.1202),  #Door de aanpassing krijgt u in 2025 over 
+                            # al uw aftrekposten in de hoogste belastingschijf maximaal 37,48% belasting 
     (2024, 75518, 0.1253),  # 36.97%
     (2023, 73031, 0.1257),  # 36.93%
     (2022, 69399, 0.0950),  # 40%

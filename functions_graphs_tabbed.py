@@ -99,9 +99,14 @@ def add_crosshair(fig, ax, lines):
 def create_tabbed_graphs(resultaat, master_window):
     """Main function to create the tabbed analysis interface."""
     # Data extraction
+     #       arbeidskorting =  all_results['primary'] ['box1'] ['arbeidskorting']  
+     #       ouderenkorting = all_results['primary'] ['box1'] ['ouderenkorting']           
+
+
+
     data_keys = ['inkomen_arbeid', 'box1_loonheffing', 'totale_aanslag', 
-                 'premies_volksverz', 'arbeidskorting', 'heffingskorting', 'kortingentotaal','aanslag']
-    incomes, box1_tax, box1_total, premies, arbeidskorting, heffingskorting, kortingen ,aanslag = (
+                 'premies_volksverz', 'arbeidskorting', 'ouderenkorting','heffingskorting', 'kortingentotaal','aanslag']
+    incomes, box1_tax, box1_total, premies, arbeidskorting, ouderenkorting, heffingskorting, kortingen ,aanslag = (
         [clean_currency(row[key]) for row in resultaat] for key in data_keys
     )
 
@@ -138,12 +143,13 @@ def create_tabbed_graphs(resultaat, master_window):
     
     fig1, ax1 = plt.subplots(figsize=(10,6))
     line1, = ax1.plot(incomes, box1_tax, 'b-', label='loonheffing')
-    line2, = ax1.plot(incomes, aanslag, 'r-', label='Aanslag incl heffingen')
-    
+    line2, = ax1.plot(incomes, box1_total, 'r-', label='Box1 totaal')
+    line3, = ax1.plot(incomes, aanslag, 'y-', label='Aanslag incl heffingen')   
+
     ax1.set(xlabel='Income (€)', ylabel='Amount (€)', title='Tax Analysis')
     ax1.grid(True, alpha=0.3)
     ax1.axhline(0, color='k', lw=1)
-    add_crosshair(fig1, ax1, [line1, line2])
+    add_crosshair(fig1, ax1, [line1, line2, line3])
     
     canvas1 = FigureCanvasTkAgg(fig1, tab1)
     canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True)
@@ -157,6 +163,7 @@ def create_tabbed_graphs(resultaat, master_window):
     lines_kort = [
         ax2.plot(incomes, heffingskorting, 'b-', label='Heffings Korting')[0],
         ax2.plot(incomes, arbeidskorting, 'g-', label='Arbeids Korting')[0],
+        ax2.plot(incomes, ouderenkorting, 'm-', label='Ouderen Korting')[0],
         ax2.plot(incomes, kortingen, 'r-', label='Total Kortingen')[0]
     ]
     
