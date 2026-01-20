@@ -4,12 +4,12 @@ from oudspul.arbeidskorting import ArbeidskortingCalculator
 
 def test_arbeidskorting():
     calculator = ArbeidskortingCalculator()
-    incomes = range(5000, 100001, 1000)  # Income from €5,000 to €100,000 in steps of €1,000
+    incomes = range(0, 150000, 1000)  # Income from €5,000 to €100,000 in steps of €1,000
     arbeidskortingen = []
-    year = 2025
+    year = 2026
 
     for income in incomes:
-        arbeidskorting = calculator.bereken_arbeidskorting(income, year, 0)
+        arbeidskorting = calculator.bereken_arbeidskorting(income, year, 1)
         arbeidskortingen.append(arbeidskorting)
 
     # Create a table
