@@ -1,6 +1,7 @@
 # Inkomsten Belasting 
 
 __De jaarlijkse belasting invul oefeningen zijn er weer.__
+
 Ik heb al jaren geleden  een spreadsheet gemaakt met VBA routines om snel het e.e.a na te rekenen.
 Maar VBA onderhouden is een uitdaging op zich, bovendien stonden alle getalletjes in de code en dat was ook niet optimaal. 
 Nu met chatgpt en deepseek ben ik eens in Python gedoken.
@@ -42,27 +43,30 @@ Parameters om de verdeling te berekenen worden aan de eerste persoon gehangen. D
 - deel_box3  voor het deel dat je voor rekening neemt in box3
 - deel_div  voor het deel dat je eventuele dividend belasting voor je rekening neemt.
 
-# Berekenings Modus: Normal (1) vs Beste Verdeling (2) vs Loop Salaris(3) (zie belastingen.py)
+# Berekenings Modus:
+
+Je kunt een drietal  berekenings modussen kiezen deze worden afgehandeld in belastingen.py
+
 - Program Setting Mode 1: Normal
 
 Als bij general program settings normal invoert rekent het programma met de opgegeven verdeling. 
 
 - Program Setting Mode 2: Beste verdeling
 
-Wanneer je kiest voor beste verdeling. Gaat het programma de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div
+Wanneer je kiest voor beste verdeling. Gaat het programma de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div (divident)
 Het geheel wordt met stapjes van 0.1 van 0-1.0 doorgerekent, voor ieder deel dus 10^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
-Aangezien het een flink aantal berekeningen zijn duurt het ff (bij mij 30 s). G
+Het aantal stapjes kun je veranderen op regel 214 in de code. 
 
 Als je geen partner hebt worden alle parameters op 1 gezet en wordt het zoeken naar de beste verdeling overgeslagen.
 
 - Program Setting Mode 3: Loop salaris (controle kortingsgrafieken)
 
 Gebruik: Kies deze modus en druk op calculate. 
-Ik was even vergeten dat ik deze er ingezet had. Meer ter controle van de database en nog niet perfect zie ik nu.
+Ik was even vergeten dat ik deze er vorig jaar had ingezet. Meer ter controle van de database en formules voor de kortingen en nog niet perfect zie ik nu.
 Deze modus loopt met stapjes van 1000 euro richting de 120000 (geen partner en geen AOW ongeacht input)
 En creert een tabbed graph om te zien of de data van de kortingen redelijk consistent zijn. 
-- Inkomen vs Loonheffing 
-- Inkomen vs Arbeidskorting en Heffingskorting
+- Inkomen vs Box1 Totaal (Loonheffing incl. premies en kortingen) & Netto Loonheffing
+- Inkomen vs Arbeidskorting en Heffingskorting en totale korting
 - Inkomen vs Premies
 
 Ouderenkorting werkt nog niet 
