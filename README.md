@@ -60,7 +60,12 @@ Als je geen partner hebt worden alle parameters op 1 gezet en wordt het zoeken n
 Gebruik: Kies deze modus en druk op calculate. 
 Ik was even vergeten dat ik deze er ingezet had. Meer ter controle van de database en nog niet perfect zie ik nu.
 Deze modus loopt met stapjes van 1000 euro richting de 120000 (geen partner en geen AOW ongeacht input)
-En creert een tabbed graph om te zien of de data van de krotingen redelijk consistent zijn. 
+En creert een tabbed graph om te zien of de data van de kortingen redelijk consistent zijn. 
+- Inkomen vs Loonheffing 
+- Inkomen vs Arbeidskorting en Heffingskorting
+- Inkomen vs Premies
+
+Ouderenkorting werkt nog niet 
 Dit is wel nuttig dus ik ga hier binnenkort nog wat tijd aan besteden en uitbreiden.
 
 # To-Do 
