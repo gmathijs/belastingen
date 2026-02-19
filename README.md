@@ -44,9 +44,11 @@ Parameters om de verdeling te berekenen worden aan de eerste persoon gehangen. D
 
 # Berekenings Modus: Normal (1) vs Beste Verdeling (2) vs Loop Salaris(3) (zie belastingen.py)
 - Program Setting Mode 1: Normal
+
 Als bij general program settings normal invoert rekent het programma met de opgegeven verdeling. 
 
 - Program Setting Mode 2: Beste verdeling
+
 Wanneer je kiest voor beste verdeling. Gaat het programma de beste verdeling zoeken voor deel_box1, deel_box3 en deel_div
 Het geheel wordt met stapjes van 0.1 van 0-1.0 doorgerekent, voor ieder deel dus 10^3 berekeningen. Dat geeft je een aardig beeld waar ongeveer de optimale verdeling zit.
 Aangezien het een flink aantal berekeningen zijn duurt het ff (bij mij 30 s). G
@@ -54,6 +56,7 @@ Aangezien het een flink aantal berekeningen zijn duurt het ff (bij mij 30 s). G
 Als je geen partner hebt worden alle parameters op 1 gezet en wordt het zoeken naar de beste verdeling overgeslagen.
 
 - Program Setting Mode 3: Loop salaris (controle kortingsgrafieken)
+
 Gebruik: Kies deze modus en druk op calculate. 
 Ik was even vergeten dat ik deze er ingezet had. Meer ter controle van de database en nog niet perfect zie ik nu.
 Deze modus loopt met stapjes van 1000 euro richting de 120000 (geen partner en geen AOW ongeacht input)
