@@ -59,18 +59,16 @@ Het aantal stapjes kun je veranderen op regel 214 in de code.
 
 Als je geen partner hebt worden alle parameters op 1 gezet en wordt het zoeken naar de beste verdeling overgeslagen.
 
-- Program Setting Mode 3: Loop salaris (controle kortingsgrafieken)
+- Program Setting Mode 3: Loop salaris (controle en inzicht kortingen)
 
-Gebruik: Kies deze modus en druk op calculate. 
-Ik was even vergeten dat ik deze er vorig jaar had ingezet. Meer ter controle van de database en formules voor de kortingen en nog niet perfect zie ik nu.
-Deze modus loopt met stapjes van 1000 euro richting de 120000 (geen partner en geen AOW ongeacht input)
+Gebruik: Kies deze modus, kies op tab2 of je AOW hebt ja of nee. Druk daarna op calculate
+Meer ter controle van de database en formules voor de kortingen.
+Deze modus loopt met stapjes van 1000 euro richting de 120000
 En creert een tabbed graph om te zien of de data van de kortingen redelijk consistent zijn. 
 - Inkomen vs Box1 Totaal (Loonheffing incl. premies en kortingen) & Netto Loonheffing
-- Inkomen vs Arbeidskorting en Heffingskorting en totale korting
+- Inkomen vs Arbeidskorting, Heffingskorting en Ouderenkorting en totale korting
 - Inkomen vs Premies
 
-Ouderenkorting werkt nog niet 
-Dit is wel nuttig dus ik ga hier binnenkort nog wat tijd aan besteden en uitbreiden.
 
 # To-Do 
 Is het compleet? Nee vast niet, maar bij mijn opgaven inclusief partner ging het binnen €10 goed.
