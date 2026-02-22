@@ -11,6 +11,7 @@
 # CMD K X = Fold all
 # Standard library
 import os
+import sys
 import threading
 
 # tkinter 
@@ -732,6 +733,8 @@ class TaxInputApp:
         """Cleanly exit the application"""
         if messagebox.askokcancel("Quit", "Are you sure you want to quit?"):
             self.root.destroy()
+            self.root.quit()  # Voeg dit toe
+            sys.exit(0)  # Forceer volledige afsluiting
 
     def add_recent_files_menu(self):
         """Add recent files submenu to File menu"""
