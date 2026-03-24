@@ -36,9 +36,9 @@ def calculate_box1(input_data, person, tussenresultaat):
     loonheffing = loonbelasting_calculator.bereken_loonheffing(inkomenwerkenwoning, input_data["year"], person["aow_er"])
     loonheffing_excl = loonheffing - totaalpremies
 
-    # Bereken de Heffingskorting 
+    # Bereken de Heffingskorting deze is afhankelijk van het verzamel inkomen 
     heffingskorting_calculator = HeffingskortingCalculator(input_data["db_path"])
-    heffingskorting = max(0,heffingskorting_calculator.bereken_heffingskorting(inkomenwerkenwoning,input_data["year"], person["aow_er"]))
+    heffingskorting = max(0,heffingskorting_calculator.bereken_heffingskorting(verzamelinkomen,input_data["year"], person["aow_er"]))
 
     # Bereken de ouderen korting moet gebaseerd zijn op het verzamel inkomen wat weer op zijn beurt 
     calculator_ok = OuderenKorting(input_data["db_path"])
