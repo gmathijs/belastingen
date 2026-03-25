@@ -13,6 +13,7 @@
 import os
 import sys
 import threading
+import datetime
 
 # tkinter 
 import tkinter as tk
@@ -369,12 +370,22 @@ class TaxInputApp:
         self.opslagnaam = ttk.Entry(self.general_frame)
         self.opslagnaam.grid(row=1, column=1, padx=5, pady=5)
         self.opslagnaam.insert(0, self.filename)
+
+        # Bepaal het huidige jaar en het gewenste standaardjaar (vorig jaar)
+        current_year = datetime.datetime.now().year
+        default_year = str(current_year - 1)
+
+        # Dynamische lijst: [current_year+1, current_year, current_year-1, ..., current_year-5]
+        years = [str(current_year + 1 - i) for i in range(7)]   # of: list(range(current_year+1, current_year-6, -1))
             
         ttk.Label(self.general_frame, text="Belasting Jaar:").grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        self.year = ttk.Combobox(self.general_frame, values=["2026", "2025", "2024", "2023", "2022", "2021", "2020"])
-        #self.year = ttk.Entry(self.general_frame)
+        self.year = ttk.Combobox(self.general_frame, values=years)
         self.year.grid(row=3, column=1, padx=5, pady=5)
-        self.year.current(0)
+
+        if default_year in years:
+            self.year.set(default_year)
+        else:
+            self.year.current(0)  # of een andere fallback
         
         # Box 3 assets
         ttk.Label(self.general_frame, text="Opgaven Box 3 ", font=('Arial', 14, 'bold')).grid(row=4, column=0, columnspan=2, pady=5)

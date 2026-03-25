@@ -35,7 +35,8 @@ def format_table_all(data_in,data_out):
         [" ", " "],  # empty line
         ["Overzicht Werk en Woning", " "],
         ["Inkomen uit arbeid", f"€{data_out['box1']['Inkomen uit arbeid']:,.0f}"],
-        ["Pensioen of uitkering", f"€{data_out['box1']['Pensioen of uitkering']:,.0f}"],   
+        ["Pensioen of uitkering", f"€{data_out['box1']['Pensioen of uitkering']:,.0f}"],  
+        ["Eigen Woning Forfait", f"€{data_out['box1a']['EigenWoningForfait']:,.0f}"],    
         ["Aftrekbare rente Eigen Woning", f"€{data_out['box1a']['AftrekbareUitgavenEigenwoning']:,.0f}"],
         ["Totaal inkomsten Eigen Woning", f"€{data_out['box1a']['TotaalEigenWoning']:,.0f}"],
         ["Uw Deel", f"€{data_out['box1a']['UwDeel']:,.0f}"],

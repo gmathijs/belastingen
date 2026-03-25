@@ -115,6 +115,10 @@ def calculate_inkomen_werkenwoning(input_data, person, tussenresultaat):
 
     aftrekeigenwoning = aftrekeigenwoning-aftrek_extra
     totaaleigenwoning=  (eigenwoningforfait - aftrekeigenwoning)
+    if totaaleigenwoning > 0:
+        #wet hillen moet nog in de database voor 2025 76.667%
+        totaaleigenwoning = 0.76667 * totaaleigenwoning
+
     totaaleigenwoning_uwdeel = totaaleigenwoning*person['deel_box1']
 
     inkomen_werk_woning = bruto + totaaleigenwoning_uwdeel
