@@ -15,17 +15,17 @@ import sys
 import threading
 import datetime
 
-# tkinter 
+# tkinter
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
 # Local Application
 from belastingen import belastingen
-from functions_output import (format_table_all, 
-                              merge_data, 
+from functions_output import (format_table_all,
+                              merge_data,
                               format_table_totaal
                               )
-from save_input import (read_input_from_csv, 
+from save_input import (read_input_from_csv,
                         write_input_to_csv
                         )
 from functions_graphs_tabbed import create_tabbed_graphs
@@ -50,25 +50,25 @@ class TaxInputApp:
         self.root = root
         self.setup_validation()  # Initialize validation system
         self.root.title("Inkomsten Belasting  Input")
-        
+
 
         # Initialize partner toggle variable
         self.primary_heeft_partner = tk.BooleanVar(value=False)
-        
+
         # Create notebook
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        
+
         # Create all frames first
         self.general_frame = ttk.Frame(self.notebook)
         self.primary_frame = ttk.Frame(self.notebook)
         self.partner_frame = ttk.Frame(self.notebook)
-        
+
         # Add tabs to notebook (store the frame references)
         self.notebook.add(self.general_frame, text="Algemeen")
         self.notebook.add(self.primary_frame, text="Primair")
         self.notebook.add(self.partner_frame, text="Partner", state="disabled")  # Disabled initially
-        
+
         # Build all tabs
         self.create_general_tab()
         self.create_primary_tab()
@@ -77,7 +77,7 @@ class TaxInputApp:
 
         # Bind partner toggle
         #self.primary_heeft_partner.trace_add('write', lambda *_: self.update_partner_tab())
-        
+
         # Initialize data structure
         self.input_data = {
             "primary": {},
@@ -93,42 +93,42 @@ class TaxInputApp:
         # Create button frame at bottom
         button_frame = ttk.Frame(root)
         button_frame.pack(pady=10, fill=tk.X)
-        
+
         # Add buttons with consistent styling
         btn_style = {'width': 12, 'padding': (5, 2)}
-        
+
         ttk.Button(
-            button_frame, 
-            text="Load Input", 
+            button_frame,
+            text="Load Input",
             command=self.load_csv_data,
             **btn_style
         ).pack(side=tk.LEFT, padx=5)
-        
+
         ttk.Button(
-            button_frame, 
-            text="Save Input", 
+            button_frame,
+            text="Save Input",
             command=self.save_current_input,
             **btn_style
         ).pack(side=tk.LEFT, padx=5)
-        
+
         self.submit_button = ttk.Button(
-            button_frame, 
-            text="Calculate", 
+            button_frame,
+            text="Calculate",
             command=self.start_calculation,
             style='Accent.TButton',  # Make calculate button stand out
             **btn_style
         )
         self.submit_button.pack(side=tk.LEFT, padx=5)
-        
+
         ttk.Button(
-            button_frame, 
-            text="Quit", 
+            button_frame,
+            text="Quit",
             command=self.quit_program,
             **btn_style
         ).pack(side=tk.RIGHT, padx=5)
 
         # Run audit last
-        self.audit_widget_names() 
+        self.audit_widget_names()
 
     def audit_widget_names(self):
         """Print all widget attributes and their types"""
@@ -139,23 +139,23 @@ class TaxInputApp:
 
     def load_csv_data(self):
         """
-            File Dialog Asks the user to give a Input CSV file 
+            File Dialog Asks the user to give a Input CSV file
             Calls: Read_input_from_csv, populate_fields
 
         """
-        
+
         file_path = filedialog.askopenfilename(
             title="Select Input CSV File",
             filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
             initialdir=os.path.dirname(os.path.abspath(__file__))
         )
-        
+
         if file_path:
             try:
                 input_data = read_input_from_csv(file_path)
                 self.populate_fields(input_data)
                 messagebox.showinfo(
-                    "Success", 
+                    "Success",
                     f"Loaded input from:\n{file_path}\n\n"
                     "Please verify all values and click Calculate when ready."
                 )
@@ -169,10 +169,10 @@ class TaxInputApp:
             print("Input data received:", input_data.keys())
             if 'primary' in input_data:
                 print("Primary data:", input_data['primary'].keys())
-            
+
             # ===== General Tab Fields =====
             general_fields = {
-                'db_path': 'db_path',  
+                'db_path': 'db_path',
                 'opslagnaam': 'opslagnaam',                          # Common alternative name
                 'year': 'year',
                 'aftrek_eigenwoning': 'aftrek_eigenwoning',
@@ -183,7 +183,7 @@ class TaxInputApp:
                 'schuld': 'schuld',
                 'dividend': 'dividend'
             }
-            
+
             for field, widget_name in general_fields.items():
                 if hasattr(self, widget_name):
                     widget = getattr(self, widget_name)
@@ -200,19 +200,19 @@ class TaxInputApp:
                 aow_index = input_data['primary'].get('aow_er', 0)
                 self.primary_aow.current(aow_index)
                 print(f"Set AOW to index {aow_index}")  # Debug
-            
+
         # Partner checkbox - using the correct variable name
             if hasattr(self, 'primary_heeft_partner'):
                 # Get the value from input data (default to False if not found)
                 partner_status = input_data['primary'].get('heeft_partner', False)
-                
+
                 # Set the checkbox value
                 self.primary_heeft_partner.set(partner_status)
                 print(f"DEBUG: Partner checkbox set to {partner_status}")
-                
+
                 # Force GUI update
                 self.update_partner_tab()
-                
+
                 # If partner exists, make sure tab is enabled immediately
                 if partner_status and hasattr(self, 'partner_tab'):
                     self.notebook.tab(self.partner_tab, state='normal')
@@ -228,7 +228,7 @@ class TaxInputApp:
                 'al_ingehouden': 'primary_al_ingehouden',
                 'voorlopige_aanslag': 'primary_voorlopige_aanslag'
             }
-            
+
             for field, widget_name in primary_mappings.items():
                 if hasattr(self, widget_name):
                     value = input_data['primary'].get(field) or input_data['primary'].get(field.lower(), '')
@@ -251,7 +251,7 @@ class TaxInputApp:
                     # Force partner tab to be visible first
                     if hasattr(self, 'partner_tab'):
                         self.notebook.tab(self.partner_tab, state='normal')
-                    
+
                     # Now populate partner fields
                     partner_mappings = {
                         'naam': 'partner_naam',
@@ -269,7 +269,7 @@ class TaxInputApp:
                         if hasattr(self, widget_name):
                             widget = getattr(self, widget_name)
                             value = str(input_data['partner'].get(field, ''))
-                            
+
                             if isinstance(widget, ttk.Combobox):
                                 widget.set(value)
                             else:
@@ -292,7 +292,7 @@ class TaxInputApp:
             self.progress_label.config(text="Calculating...")
 
             self.delete_output(self.filename)
-            
+
             # Get the input data
             try:
                 input_data = self.submit_data()  # This collects data but doesn't close window
@@ -314,21 +314,21 @@ class TaxInputApp:
         try:
             # Run the calculation
             result = belastingen(input_data)
-            
+
             # Update UI when done
             self.root.after(0, self.calculation_done, result)
         except Exception as e:
             self.root.after(0, self.calculation_failed, str(e))
-        
+
     def calculation_done(self, result):
         """Handle successful calculation"""
         self.calculating = False
         self.submit_button.config(state=tk.NORMAL)
         self.progress_label.config(text="Calculation complete!")
-        
+
         # Handle the output display
         self.handle_output(result)
-        
+
         # Optional: show summary in messagebox
         # total = result['totaal']['aanslag']
 
@@ -336,7 +336,7 @@ class TaxInputApp:
         #   "Calculation Complete",
         #   f"Tax calculation finished!\nTotal amount: €{total:,.2f}"
         #)
-        
+
     def calculation_failed(self, error):
         """Handle calculation errors"""
         self.calculating = False
@@ -349,7 +349,7 @@ class TaxInputApp:
         # Check if file exists and find the next available number
         if filename == self.filename:
             counter = 1
-            basename = filename 
+            basename = filename
             filename = basename+".txt"
             while os.path.exists(filename):
                 os.remove(filename)
@@ -357,7 +357,7 @@ class TaxInputApp:
                 counter += 1
     # ------------------
     # Create Window Tabs
-    # ------------------        
+    # ------------------
     def create_general_tab(self):
         """General information tab"""
         ttk.Label(self.general_frame, text="Database Path:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
@@ -377,7 +377,7 @@ class TaxInputApp:
 
         # Dynamische lijst: [current_year+1, current_year, current_year-1, ..., current_year-5]
         years = [str(current_year + 1 - i) for i in range(7)]   # of: list(range(current_year+1, current_year-6, -1))
-            
+
         ttk.Label(self.general_frame, text="Belasting Jaar:").grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
         self.year = ttk.Combobox(self.general_frame, values=years)
         self.year.grid(row=3, column=1, padx=5, pady=5)
@@ -386,10 +386,10 @@ class TaxInputApp:
             self.year.set(default_year)
         else:
             self.year.current(0)  # of een andere fallback
-        
+
         # Box 3 assets
         ttk.Label(self.general_frame, text="Opgaven Box 3 ", font=('Arial', 14, 'bold')).grid(row=4, column=0, columnspan=2, pady=5)
-        
+
         fields = [
             ("Spaargeld:", "spaargeld", "100", "Opgeteld spaargeld op alle rekeningen"),
             ("Beleggingen:", "belegging", "0", "Totaal uitstaande beleggingen op 1 Januari (zie jaaropgaven)"),
@@ -399,7 +399,7 @@ class TaxInputApp:
             ("Ingehouden dividend:", "dividend", "0", "Totaal ingehouden dividend"),
             ("Aftrek Eigen woning:", "aftrek_eigenwoning", "0", "Aftrekbare kosten eigenwoning, betaalde rente, afsluitkosten")
         ]
-        
+
         for i, (label, attr, default, tooltip) in enumerate(fields, start=5):
             ttk.Label(self.general_frame, text=label).grid(row=i, column=0, sticky=tk.W, padx=5, pady=5)
             setattr(self, attr, ttk.Entry(self.general_frame))
@@ -414,39 +414,39 @@ class TaxInputApp:
             )
             entry.grid(row=i, column=1, padx=5, pady=5)
             entry.insert(0, default)
-            
+
             # Bind to show validation status
             entry.bind("<FocusOut>", self.update_validation_style)
             self.update_validation_style(None, entry)  # Initial validation
-            
+
             setattr(self, attr, entry)
-            
+
             # Add tooltip if specified
             #if tooltip:
             #    ToolTip(entry, tooltip)
-            
+
             # Add tooltip if specified
             if tooltip:
                 ToolTip(getattr(self, attr), tooltip)
-       
+
         # Program settings
         ttk.Label(self.general_frame, text="Program Mode:").grid(row=12, column=0, sticky=tk.W, padx=5, pady=5)
         self.programsetting_mode = ttk.Combobox(self.general_frame, values=["Normaal", "Bereken optimale verdeling","Loop salaris"])
         self.programsetting_mode.grid(row=12, column=1, padx=5, pady=5)
         self.programsetting_mode.current(0)
-        
+
     def create_primary_tab(self):
         """Primary taxpayer tab"""
         # Clear previous widgets if any (safety measure)
         for widget in self.primary_frame.winfo_children():
             widget.destroy()
-        
+
         # Name field
         ttk.Label(self.primary_frame, text="Naam:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
         self.primary_naam = ttk.Entry(self.primary_frame)
         self.primary_naam.grid(row=0, column=1, padx=5, pady=5, sticky=tk.EW)
         self.primary_naam.insert(0, "naam")
-        
+
         # Partner checkbox
         ttk.Label(self.primary_frame, text="Heeft Partner:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
         ttk.Checkbutton(
@@ -455,7 +455,7 @@ class TaxInputApp:
             command=self.update_partner_tab  # Ensure this is connected
         ).grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
 
-        
+
         # Other primary fields with tooltips
         fields = [
             ("AOW Status:", "primary_aow", ["No AOW", "AOW after 1946", "AOW before 1946"], 0, "Selecteer of persoon AOW heeft"),
@@ -471,7 +471,7 @@ class TaxInputApp:
         for i, (label, attr, *rest) in enumerate(fields, start=2):
             # Create label
             ttk.Label(self.primary_frame, text=label).grid(row=i, column=0, sticky=tk.W, padx=5, pady=5)
-            
+
             # Create widget
             if isinstance(rest[0], list):  # Combobox
                 widget = ttk.Combobox(self.primary_frame, values=rest[0])
@@ -483,7 +483,7 @@ class TaxInputApp:
                     validate_cmd = self.validate_share_cmd
                 else:
                     validate_cmd = self.validate_num_cmd
-                
+
                 widget = ttk.Entry(
                     self.primary_frame,
                     validate="key",
@@ -491,23 +491,23 @@ class TaxInputApp:
                 )
                 widget.insert(0, rest[0])
                 tooltip_text = rest[1] if len(rest) > 1 else ""
-                
+
                 # Set up validation
                 widget.bind("<FocusOut>", lambda e, w=widget: self.update_validation_style(widget=w))
                 self.update_validation_style(widget=widget)
-            
+
             # Grid the widget
             widget.grid(row=i, column=1, padx=5, pady=5, sticky=tk.EW)
             setattr(self, attr, widget)
-            
+
             # Add tooltip if specified
             if tooltip_text:
                 ToolTip(widget, tooltip_text)
-        
+
         # Configure column weights
         self.primary_frame.columnconfigure(0, weight=1)
         self.primary_frame.columnconfigure(1, weight=3)
-            
+
     def create_partner_tab(self):
         """Partner tab (initially disabled)"""
         # Clear previous widgets if any
@@ -519,7 +519,7 @@ class TaxInputApp:
         self.partner_naam = ttk.Entry(self.partner_frame)
         self.partner_naam.grid(row=0, column=1, padx=5, pady=5, sticky=tk.EW)
         self.partner_naam.insert(0, "Persoon 2")
-        
+
         # Partner fields
         fields = [
             ("AOW Status:", "partner_aow", ["No AOW", "AOW after 1946", "AOW before 1946"], 0, "Selecteer of persoon AOW heeft"),
@@ -528,10 +528,10 @@ class TaxInputApp:
             ("Ingehouden loonheffing:", "partner_al_ingehouden", "0","Totale ingehouden loonheffing zie jaaropgaven"),
             ("Betaald voorlopige belasting:", "partner_voorlopige_aanslag", "0", "Al betaald via Voorlopige Aanslag")
         ]
-        
+
         for i, (label, attr, *rest) in enumerate(fields, start=1):  # Start at row 1
             ttk.Label(self.partner_frame, text=label).grid(row=i, column=0, sticky=tk.W, padx=5, pady=5)
-            
+
             if isinstance(rest[0], list):  # Combobox
                 widget = ttk.Combobox(self.partner_frame, values=rest[0])
                 widget.current(rest[1])
@@ -539,7 +539,7 @@ class TaxInputApp:
             else:  # Entry field
                 # Use share validation for deel fields
                 validate_cmd = self.validate_num_cmd
-                    
+
                 widget = ttk.Entry(
                     self.partner_frame,
                     validate="key",
@@ -547,17 +547,17 @@ class TaxInputApp:
                 )
                 widget.insert(0, rest[0])
                 tooltip_text = rest[1] if len(rest) > 1 else ""
-                
+
                 # Set up validation styling
                 widget.bind("<FocusOut>", lambda e, w=widget: self.update_validation_style(widget=w))
                 self.update_validation_style(widget=widget)
-            
+
             widget.grid(row=i, column=1, padx=5, pady=5, sticky=tk.EW)
             setattr(self, attr, widget)
-            
+
             if tooltip_text:
                 ToolTip(widget, tooltip_text)
-        
+
         # Configure column weights
         self.partner_frame.columnconfigure(0, weight=1)
         self.partner_frame.columnconfigure(1, weight=3)
@@ -567,7 +567,7 @@ class TaxInputApp:
 
         new_state = "normal" if self.primary_heeft_partner.get() else "disabled"
         self.notebook.tab(self.partner_frame, state=new_state)
-        
+
         # Switch to primary tab if disabling partner
         if not self.primary_heeft_partner.get():
             self.notebook.select(self.primary_frame)
@@ -579,7 +579,7 @@ class TaxInputApp:
         #Format and export the Box 3 tax calculation results.
 
         # Graph Necessary?
-        if all_results['input']['programsetting']['programsetting_mode'] ==3: 
+        if all_results['input']['programsetting']['programsetting_mode'] ==3:
             # Dan is er een resultaat deel in all_results
             print("Grafiek kan worden geplaatst")
             # Extract data from the dictionary
@@ -588,7 +588,7 @@ class TaxInputApp:
             #create_grah_income(resultaat)
 
 
-        
+
         # Define the file name
         base_name = all_results['input']['opslagnaam']
         filename = f"{base_name}.txt"
@@ -599,17 +599,17 @@ class TaxInputApp:
             filename = f"{base_name}_{counter}.txt"
             counter += 1
 
-        # Extract individual results from the dictionary for the primary 
+        # Extract individual results from the dictionary for the primary
         input_data = merge_data(all_results['input'],all_results['input']['primary'])
 
-        # Make up the output table 
+        # Make up the output table
         table_all_primary = format_table_all(input_data,all_results['primary'])
         print(table_all_primary)
         with open(filename, "w", encoding="utf-8") as file:
             file.write("Primary Person Results:\n")
-            file.write(table_all_primary + "\n") 
+            file.write(table_all_primary + "\n")
 
-        # Extract individual results from the dictionary if partner exists 
+        # Extract individual results from the dictionary if partner exists
         if input_data['heeft_partner']:
             input_data = merge_data(all_results['input'],all_results['input']['partner'])
 
@@ -625,38 +625,38 @@ class TaxInputApp:
         with open(filename, "a", encoding="utf-8") as file:
             file.write(table_totaal + "\n")
 
-        if all_results['input']['programsetting']['programsetting_mode'] != 3: 
+        if all_results['input']['programsetting']['programsetting_mode'] != 3:
             # Show in positioned window
             self.show_results_in_window(filename)
 
     def show_results_in_window(self, filename):
         """Display results in a window positioned on the right"""
         result_window = tk.Toplevel(self.root)
-        
+
         # Calculate position (right side of screen)
         screen_width = self.root.winfo_screenwidth()
         window_width = int(screen_width * 0.35)
         screen_height = self.root.winfo_screenheight()
-        window_height = int(screen_height * 0.85)        
+        window_height = int(screen_height * 0.85)
         x_position = screen_width - window_width
-        
+
         result_window.geometry(f"{window_width}x{window_height}+{x_position}+0")
         result_window.title("Tax Calculation Results")
-        
+
         # Add text widget
         text_widget = tk.Text(result_window, wrap=tk.WORD)
         scrollbar = ttk.Scrollbar(result_window, command=text_widget.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         text_widget.config(yscrollcommand=scrollbar.set)
         text_widget.pack(expand=True, fill=tk.BOTH)
-        
+
         # Read and display file contents
         try:
             with open(filename, 'r') as file:
                 text_widget.insert(tk.END, file.read())
         except Exception as e:
             text_widget.insert(tk.END, f"Error reading file: {str(e)}")
-        
+
         text_widget.config(state=tk.DISABLED)
     # ------------------
     # Button Actions
@@ -692,7 +692,7 @@ class TaxInputApp:
                     "programsetting_mode": self.programsetting_mode.current() + 1  # +1 because combobox starts at 0
                 }
             })
-            
+
             # Partner data if applicable
             if self.primary_heeft_partner.get():
                 self.input_data["partner"] = {
@@ -708,21 +708,21 @@ class TaxInputApp:
                     "deel_box3": 1 - self.input_data["primary"]["deel_box3"],
                     "deel_div": 1 - self.input_data["primary"]["deel_div"]
                 }
-            
+
             return self.input_data
-                
+
         except ValueError as e:
             messagebox.showerror("Input Error", f"Invalid input:\n{str(e)}")
         return None
 
     def save_current_input(self):
         """Save current input values to CSV"""
-        
+
         # Get current data
         input_data = self.submit_data()  # Reuse your existing data collection
         if not input_data:
             return
-        
+
         # Ask for save location
         default_name = f"{input_data['opslagnaam']}.csv"
         file_path = filedialog.asksaveasfilename(
@@ -732,7 +732,7 @@ class TaxInputApp:
             filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
             initialdir=os.path.dirname(os.path.abspath(__file__))
         )
-        
+
         if file_path:
             try:
                 write_input_to_csv(input_data, file_path)
@@ -751,16 +751,16 @@ class TaxInputApp:
         """Add recent files submenu to File menu"""
         menubar = tk.Menu(self.root)
         filemenu = tk.Menu(menubar, tearoff=0)
-        
+
         # Add your recent files logic here
         recent_files = self.load_recent_files_list()  # Implement this
-        
+
         for i, file_path in enumerate(recent_files[:5]):  # Show last 5
             filemenu.add_command(
                 label=f"{i+1}. {os.path.basename(file_path)}",
                 command=lambda f=file_path: self.load_specific_file(f)
             )
-        
+
         menubar.add_cascade(label="File", menu=filemenu)
         self.root.config(menu=menubar)
     # ------------------
@@ -771,10 +771,10 @@ class TaxInputApp:
         self.style = ttk.Style()
         self.style.configure("Valid.TEntry", foreground="green")
         self.style.configure("Error.TEntry", foreground="red")
-        
+
         # List of share fields that need 0-1 validation
         self.share_fields = ['primary_deel_box1', 'primary_deel_box3', 'primary_deel_div']
-        
+
         # Create validation commands
         self.validate_num_cmd = (self.root.register(self.validate_number_input), '%P')
         self.validate_share_cmd = (self.root.register(self.validate_share_input), '%P')
@@ -783,23 +783,23 @@ class TaxInputApp:
         """Update the visual style based on validation status"""
         widget = widget or event.widget
         value = widget.get()
-        
+
         try:
             if value == "":
                 widget.configure(style="TEntry")
                 return
-                
+
             num = float(value)
-            
+
             # Check if this is a share field by widget name
             widget_name = str(widget)
             is_share_field = any(field in widget_name for field in self.share_fields)
-            
+
             if is_share_field:
                 widget.configure(style="Valid.TEntry" if 0 <= num <= 1 else "Error.TEntry")
             else:
                 widget.configure(style="Valid.TEntry" if num >= 0 else "Error.TEntry")
-                
+
         except ValueError:
             widget.configure(style="Error.TEntry")
 
@@ -808,10 +808,10 @@ class TaxInputApp:
         try:
             if new_value == "":  # Allow empty field temporarily
                 return True
-                
+
             num = float(new_value)
             return 0 <= num <= 1  # Only allow numbers between 0 and 1
-            
+
         except ValueError:
             return False
 
@@ -820,33 +820,33 @@ class TaxInputApp:
         try:
             if new_value == "":  # Allow empty field temporarily
                 return True
-                
+
             # Try converting to float
             num = float(new_value)
-            
+
             # Check if number is >= 0
             return num >= 0
-            
+
         except ValueError:
             return False
 
     def validate_all_fields(self):
         """Validate all numeric fields before submission"""
-        fields = ["spaargeld", "belegging", "ontroerend", "woz_waarde", 
+        fields = ["spaargeld", "belegging", "ontroerend", "woz_waarde",
                  "schuld", "dividend", "aftrek_eigenwoning","primary_inkomen","primary_pensioen",
                  "primary_deel_div","primary_al_ingehouden","primary_voorlopige_aanslag",
                  "primary_deel_box1", "primary_deel_box3"]
-        
+
 
         for field in fields:
             entry = getattr(self, field)
             value = entry.get()
-            
+
             if value == "":
                 messagebox.showerror("Error", f"Field {field} cannot be empty")
                 entry.focus_set()
                 return False
-                
+
             try:
                 if float(value) < 0:
                     messagebox.showerror("Error", f"Field {field} must be >= 0")
@@ -856,21 +856,21 @@ class TaxInputApp:
                 messagebox.showerror("Error", f"Field {field} must be a number")
                 entry.focus_set()
                 return False
-                
+
         return True
 
 class ToolTip:
     """
-        Handelt de tooltips af. 
-        Bevat de defaults maar geeft ook de mogelijkheden voor 
+        Handelt de tooltips af.
+        Bevat de defaults maar geeft ook de mogelijkheden voor
         persoonlijke aanpassingen
     """
-    def __init__(self, widget, text, 
-                 bg="#ffffe0", fg="black", 
+    def __init__(self, widget, text,
+                 bg="#ffffe0", fg="black",
                  font=("tahoma", "12", "normal"),
-                 delay=500, 
+                 delay=500,
                  x_offset=150, y_offset=25,
-                 border=1, 
+                 border=1,
                  justify="left",
                  relief="solid"):
         self.widget = widget
@@ -896,16 +896,16 @@ class ToolTip:
     def showtip(self):
         if self.tipwindow or not self.text:
             return
-        
+
         # Calculate position
         x = self.widget.winfo_rootx() + self.x_offset
         y = self.widget.winfo_rooty() + self.y_offset
-        
+
         # Create window
         self.tipwindow = tw = tk.Toplevel(self.widget)
         tw.wm_overrideredirect(True)
         tw.wm_geometry(f"+{x}+{y}")
-        
+
         # Customize appearance
         label = tk.Label(tw, text=self.text, justify=self.justify,
                       background=self.bg, foreground=self.fg,
@@ -930,8 +930,8 @@ def check_input(data):
     if data["primary"]["heeft_partner"]:
         # Primary heeft partner
         if "partner" not in data:
-            raise ValueError("Partner data is required when 'heeft_partner' is True.")   
-        
+            raise ValueError("Partner data is required when 'heeft_partner' is True.")
+
         # Enforce deel_box1 dependency
         if "deel_box1" in data["primary"]:
             data["partner"]["deel_box1"] = 1 - data["primary"]["deel_box1"]
@@ -955,7 +955,7 @@ def check_input(data):
             # Default to 1 for primary and 1 for partner
             data["primary"]["deel_div"] = 1.0
             data["partner"]["deel_div"] = 0.0
-    else: 
+    else:
         # Geen partner
         data["primary"]["deel_box1"] = 1.0
         data["primary"]["deel_box3"] = 1.0
@@ -965,7 +965,7 @@ def check_input(data):
 
 # Afmetingen Computer Scherm
 def get_screen_dimensions(root):
-    """Bepaalt de afmetingen van het scherm om  ordentelijke 
+    """Bepaalt de afmetingen van het scherm om  ordentelijke
     invoer en uitvoer schermen te tonen
     """
     screen_width = root.winfo_screenwidth()
@@ -977,12 +977,15 @@ def get_screen_dimensions(root):
 # ------------------------
 if __name__ == "__main__":
     root = tk.Tk()
-    
+
     # Position main window on left
     screen_width, screen_height = get_screen_dimensions(root)
     window_width = int(screen_width * 0.45)  # 45% of screen width
     window_height = int(screen_height * 0.8)  # 80% of screen height
-    
+
     root.geometry(f"{window_width}x{window_height}+0+0")  # X=0 (far left)
     app = TaxInputApp(root)
+    root.lift()
+    root.focus_force()
     root.mainloop()
+    
