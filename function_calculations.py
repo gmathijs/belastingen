@@ -17,6 +17,7 @@ from classes_IB import (
     OuderenKorting, EigenWoningForfaitCalculator,
     TariefAanpassingEigenWoning
 )
+import math
 
 def calculate_box1(input_data, person, tussenresultaat):
     """
@@ -104,7 +105,11 @@ def calculate_inkomen_werkenwoning(input_data, person, tussenresultaat):
 
     # Bereken het EigenWoning forfait
     calculator_ewf = EigenWoningForfaitCalculator(input_data["db_path"])
-    eigenwoningforfait = calculator_ewf.bereken_eigenwoningforfait(  input_data["woz_waarde"],input_data["year"])
+    # Na het aanmaken van calculator_ewf, voeg dit toe:
+    wethillen_percentage = calculator_ewf.get_wethillen(input_data["year"])
+    eigenwoningforfait = calculator_ewf.bereken_eigenwoningforfait(input_data["woz_waarde"],input_data["year"])
+    # Probeer dit:
+
 
     # Voeg hier de tariefsaanpassing EigenWoning toe 
     aftrekeigenwoning =  input_data["aftrek_eigenwoning"]   # totaal bedrag
@@ -114,10 +119,10 @@ def calculate_inkomen_werkenwoning(input_data, person, tussenresultaat):
     aftrek_extra= calc_tariefsaanpassing.calculate_tarief_aanpassing(aftrekeigenwoning, bruto ,input_data["year"])
 
     aftrekeigenwoning = aftrekeigenwoning-aftrek_extra
-    totaaleigenwoning=  (eigenwoningforfait - aftrekeigenwoning)
+    totaaleigenwoning=  math.ceil((eigenwoningforfait - aftrekeigenwoning))
+
     if totaaleigenwoning > 0:
-        #wet hillen moet nog in de database voor 2025 76.667%
-        totaaleigenwoning = 0.76667 * totaaleigenwoning
+        totaaleigenwoning = math.ceil(wethillen_percentage * totaaleigenwoning)
 
     totaaleigenwoning_uwdeel = totaaleigenwoning*person['deel_box1']
 
@@ -132,7 +137,7 @@ def calculate_inkomen_werkenwoning(input_data, person, tussenresultaat):
     results_inkomen_werkenwoning = {
         "BrutoInkomen": bruto ,                                  #   Bruto Inkomen            
         "EigenWoningForfait": eigenwoningforfait,                #   Eigen Woning Forfait# Total gross income
-        "AftrekbareUitgavenEigenwoning": aftrekeigenwoning,      #   Aftrek eigenwoning
+        "AftrekbareUitgavenEigenwoning": aftrekeigenwoning,    
         "TotaalEigenWoning": totaaleigenwoning,                  #   Totaal  eigen woning       
         "UwDeel": totaaleigenwoning_uwdeel,                      #   Totaal  voor de betreffende persson       
         "InkomenWerkenWoning": inkomen_werk_woning               #   Inkomen werk en woning

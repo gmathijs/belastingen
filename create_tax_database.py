@@ -21,7 +21,7 @@ cursor.execute("DROP TABLE IF EXISTS tax_box3")
 cursor.execute("DROP TABLE IF EXISTS tbl_eigenwoningforfait")
 cursor.execute("DROP TABLE IF EXISTS tbl_ouderenkorting")
 cursor.execute("DROP TABLE IF EXISTS tbl_tarief_aanpassing")
-
+cursor.execute("DROP TABLE IF EXISTS tbl_wethillen")
 
 
 # Create the tax_loonheffing table
@@ -136,6 +136,13 @@ cursor.execute("""
     CREATE TABLE IF NOT EXISTS tbl_tarief_aanpassing (
         year INTEGER,
         income_threshold REAL,
+        percentage REAL
+    )
+""")
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tbl_wethillen (
+        year INTEGER,
         percentage REAL
     )
 """)
@@ -645,6 +652,30 @@ cursor.executemany("""
     INSERT INTO tbl_tarief_aanpassing(year, income_threshold, percentage)
     VALUES (?, ?, ?)
 """, tbl_tarief_aanpassing)
+
+# Wet Hillen wordt geleidelijk afgeschaf extra pijn voor de woning bezitters
+# die netjes hebben afgelost
+# Hebt u geen of een kleine eigenwoningschuld? Dan krijgt u een aftrek op uw eigenwoningforfait
+# Bij geen of weinig eigenwoningschuld betaalt u ook geen of weinig hypotheekrente.
+# Meestal is uw eigenwoningforfait dan hoger dan uw aftrekbare kosten.
+# Wij geven u dan een aftrek op uw eigenwoningforfait.
+
+
+tbl_wethillen =[
+    (2026, 0.71867),
+    (2025, 0.76667),
+    (2024, 0.80000),
+    (2023, 0.83300),
+    (2022, 0.86000),   # gegokt kan ik niet meer terugvinden
+    (2021, 0.89000)    # gegokt kan ik niet meer terugvinden
+]
+cursor.executemany("""
+    INSERT INTO tbl_wethillen(year, percentage)
+    VALUES (?, ?)
+""", tbl_wethillen)
+
+
+#------------------------------Oude meuk----------------------------------
 
 cursor.executemany("""
     INSERT INTO tax_premies_volksverzekeringen (year, aow_tarief, anw_tarief, wlz_tarief, maximaal_inkomen, aow_age)

@@ -406,6 +406,21 @@ class EigenWoningForfaitCalculator:
         
         return None
 
+    def get_wethillen(self, year):
+        """
+        Haal het percentage uit de wet hillen tabel voor het opgegeven jaar.
+        """
+        self.cursor.execute("""
+            SELECT percentage
+            FROM tbl_wethillen
+            WHERE year = ?
+        """, (year,))
+        result = self.cursor.fetchone()
+        
+        if result:
+            return result[0]  # Retourneer direct de float, niet een dict
+        return 1.0  # of None, afhankelijk van wat je nodig hebt
+
     def bereken_eigenwoningforfait(self, woz_waarde, year):
         """
         Calculate the Eigen Woning Forfait based on the WOZ value and year.
