@@ -2,7 +2,7 @@
 import csv
 import json
 import datetime
-from tabulate import tabulate 
+from tabulate import tabulate
 
 def format_table_all(data_in,data_out):
     """

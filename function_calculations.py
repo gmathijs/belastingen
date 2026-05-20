@@ -39,7 +39,12 @@ def calculate_box1(input_data, person, tussenresultaat):
 
     # Bereken de Heffingskorting deze is afhankelijk van het verzamel inkomen 
     heffingskorting_calculator = HeffingskortingCalculator(input_data["db_path"])
-    heffingskorting = max(0,heffingskorting_calculator.bereken_heffingskorting(verzamelinkomen,input_data["year"], person["aow_er"]))
+    if input_data["year"] < 2025:
+        # Tot 2025 is de heffingskorting afhankelijk van het inkomen uit arbeid
+        heffingskorting = max(0,heffingskorting_calculator.bereken_heffingskorting(inkomenwerkenwoning,input_data["year"], person["aow_er"]))
+    else:
+        # 2025 en later is dit afhankelijk van het verzamel inkomen.
+        heffingskorting = max(0,heffingskorting_calculator.bereken_heffingskorting(verzamelinkomen,input_data["year"], person["aow_er"]))
 
     # Bereken de ouderen korting moet gebaseerd zijn op het verzamel inkomen wat weer op zijn beurt 
     calculator_ok = OuderenKorting(input_data["db_path"])
